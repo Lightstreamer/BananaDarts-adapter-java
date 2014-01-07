@@ -47,8 +47,7 @@ public class BaseModelBody implements IBody {
     private double  deltaRotX, deltaRotY, deltaRotZ;        // angularMomentum  Vector3
 
     public BaseModelBody(String id) {
-        this(id,new AxisAngleImp(),
-                (double)((Math.random() * 50) - 25),(double)((Math.random() * 50) - 25),(double)((Math.random() * 50) - 25));
+        this(id,new AxisAngleImp(0.707,0,0,0.707),0,0,59);
     }
     
     public BaseModelBody(BaseModelBody orig) {
@@ -235,27 +234,29 @@ public class BaseModelBody implements IBody {
     
     @Override
     public void translate() {
-        this.x += (double)(this.vX * TRANSLATE_DELTA);
-        this.y += (double)(this.vY * TRANSLATE_DELTA);
         this.z += (double)(this.vZ * TRANSLATE_DELTA);
-
-        this.x = stopAtMax(this.x,MAX_SIZE_X);
-        this.y = stopAtMax(this.y,MAX_SIZE_Y);
         this.z = stopAtMax(this.z,MAX_SIZE_Z);
-                
+        if (this.z != -MAX_SIZE_Z) {
+            this.y += (double)(this.vY * TRANSLATE_DELTA);
+            this.x += (double)(this.vX * TRANSLATE_DELTA);
+    
+            this.y = stopAtMax(this.y,MAX_SIZE_Y);
+            this.x = stopAtMax(this.x,MAX_SIZE_X);
+        }     
         this.lifeSpan += 1;
     }
     
     @Override
     public void translate(double factor) {
-        this.x += (double)(this.vX * TRANSLATE_DELTA * factor);
-        this.y += (double)(this.vY * TRANSLATE_DELTA * factor);
         this.z += (double)(this.vZ * TRANSLATE_DELTA * factor);
-                
-        this.x = stopAtMax(this.x,MAX_SIZE_X);
-        this.y = stopAtMax(this.y,MAX_SIZE_Y);
         this.z = stopAtMax(this.z,MAX_SIZE_Z);
-        
+        if (this.z != -MAX_SIZE_Z) {
+            this.y += (double)(this.vY * TRANSLATE_DELTA * factor);
+            this.x += (double)(this.vX * TRANSLATE_DELTA * factor);
+            
+            this.y = stopAtMax(this.y,MAX_SIZE_Y);
+            this.x = stopAtMax(this.x,MAX_SIZE_Z);
+        }
         this.lifeSpan += 1;
     }
 
