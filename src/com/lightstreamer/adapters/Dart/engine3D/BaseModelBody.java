@@ -36,6 +36,8 @@ public class BaseModelBody implements IBody {
     private static final double MAX_SIZE_Z = 80;
     
     private String id;
+    
+    private boolean landed = false;
 
     private long    lifeSpan = 0;
     private long    lastCmdRcvd = 0;
@@ -81,6 +83,8 @@ public class BaseModelBody implements IBody {
         this.deltaRotX = deltaRotX;
         this.deltaRotY = deltaRotY;
         this.deltaRotZ = deltaRotZ;
+        
+        this.landed = false;
         
     }
     
@@ -234,16 +238,7 @@ public class BaseModelBody implements IBody {
     
     @Override
     public void translate() {
-        this.z += (double)(this.vZ * TRANSLATE_DELTA);
-        this.z = stopAtMax(this.z,MAX_SIZE_Z);
-        if (this.z != -MAX_SIZE_Z) {
-            this.y += (double)(this.vY * TRANSLATE_DELTA);
-            this.x += (double)(this.vX * TRANSLATE_DELTA);
-    
-            this.y = stopAtMax(this.y,MAX_SIZE_Y);
-            this.x = stopAtMax(this.x,MAX_SIZE_X);
-        }     
-        this.lifeSpan += 1;
+        translate(1);
     }
     
     @Override
@@ -251,15 +246,22 @@ public class BaseModelBody implements IBody {
         this.z += (double)(this.vZ * TRANSLATE_DELTA * factor);
         this.z = stopAtMax(this.z,MAX_SIZE_Z);
         if (this.z != -MAX_SIZE_Z) {
+            this.landed = false;
+            
             this.y += (double)(this.vY * TRANSLATE_DELTA * factor);
             this.x += (double)(this.vX * TRANSLATE_DELTA * factor);
             
             this.y = stopAtMax(this.y,MAX_SIZE_Y);
             this.x = stopAtMax(this.x,MAX_SIZE_Z);
+        
+        } else if (!this.landed) {
+            this.landed= true; 
+            System.out.println("------------------------------>"+DartBoard.getScore(this.x, this.y));
         }
+        
         this.lifeSpan += 1;
     }
-
+    
     @Override
     public void translate(Translation translation, double distance) {
         // TODO Auto-generated method stub
