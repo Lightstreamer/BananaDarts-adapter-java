@@ -33,7 +33,7 @@ public class BaseModelBody implements IBody {
     private static final double TRANSLATE_DELTA = 0.002;
     private static final double MAX_SIZE_X = 80;
     private static final double MAX_SIZE_Y = 45;
-    private static final double MAX_SIZE_Z = 60;
+    private static final double MAX_SIZE_Z = 80;
     
     private String id;
 
