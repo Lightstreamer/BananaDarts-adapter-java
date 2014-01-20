@@ -38,15 +38,13 @@ public class BaseModelBody implements IBody {
     private String id;
     
     private boolean landed = false;
-
-    private long    lifeSpan = 0;
-    private long    lastCmdRcvd = 0;
     
     private double  x, y, z;                                // position         Vector3
     
     private double  vX, vY, vZ;                             // velocity         Vector3
     private final AxisAngleMut  axisAngle;                  // Spin             Quaternion/Matrix3x3
     private double  deltaRotX, deltaRotY, deltaRotZ;        // angularMomentum  Vector3
+   
 
     public BaseModelBody(String id) {
         this(id,new AxisAngleImp(0.707,0,0,0.707),0,0,59);
@@ -92,10 +90,6 @@ public class BaseModelBody implements IBody {
     
     public String getId() {
         return this.id;
-    }
-    
-    public long getLifeSpan() {
-        return lifeSpan;
     }
     
     @Override
@@ -161,11 +155,7 @@ public class BaseModelBody implements IBody {
     public double getDeltaRotZ() {
         return deltaRotZ;
     }
-    
-    public long getInactivityPeriod() {
-        return (this.lifeSpan - this.lastCmdRcvd);
-    }
-    
+       
     // --> model transformations
     
     @Override
@@ -259,7 +249,6 @@ public class BaseModelBody implements IBody {
             System.out.println("------------------------------>"+DartBoard.getScore(this.x, this.y));
         }
         
-        this.lifeSpan += 1;
     }
     
     @Override
@@ -291,7 +280,6 @@ public class BaseModelBody implements IBody {
             default:
                 throw new EnumUnknownException ( axis );
         }
-        this.lastCmdRcvd = this.lifeSpan;
     }
     
     public void setTourque(Axis axis, double intensity) {
@@ -315,7 +303,6 @@ public class BaseModelBody implements IBody {
             default:
                 throw new EnumUnknownException ( axis );
         }
-        this.lastCmdRcvd = this.lifeSpan;
     }
     
     public void block() {
