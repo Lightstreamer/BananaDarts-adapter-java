@@ -44,7 +44,11 @@ public class BaseModelBody implements IBody {
     private double  vX, vY, vZ;                             // velocity         Vector3
     private final AxisAngleMut  axisAngle;                  // Spin             Quaternion/Matrix3x3
     private double  deltaRotX, deltaRotY, deltaRotZ;        // angularMomentum  Vector3
-   
+    
+    
+    private static final boolean READY = true;
+    private static final boolean FLYING = false;
+    private boolean status = READY;
 
     public BaseModelBody(String id) {
         this(id,new AxisAngleImp(0.707,0,0,0.707),0,0,59);
@@ -233,6 +237,11 @@ public class BaseModelBody implements IBody {
     
     @Override
     public void translate(double factor) {
+        if (this.vZ == 0 && this.vY == 0 && this.vX == 0) {
+            //in hand
+            return;
+        }
+        
         this.z += (double)(this.vZ * TRANSLATE_DELTA * factor);
         this.z = stopAtMax(this.z,MAX_SIZE_Z);
         if (this.z != -MAX_SIZE_Z) {
@@ -305,21 +314,7 @@ public class BaseModelBody implements IBody {
         }
     }
     
-    public void block() {
-        this.vX = 0;
-        this.vY = 0;
-        this.vZ = 0;
-        
-        this.deltaRotX = 0;
-        this.deltaRotY = 0;
-        this.deltaRotZ = 0;
-    }
     
-    public void forcePosition(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
     
     // data extraction -->
     
@@ -358,6 +353,29 @@ public class BaseModelBody implements IBody {
         model.put("dRx", String.valueOf(this.deltaRotX));
         model.put("dRy", String.valueOf(this.deltaRotY));
         model.put("dRz", String.valueOf(this.deltaRotZ));
+    }
+
+    public void throwDart(double x2, double y2, double z2) {
+        this.setImpulse(IBody.Axis.X, x);
+        this.setImpulse(IBody.Axis.Y, y);
+        this.setImpulse(IBody.Axis.Z, z);
+        
+    }
+    
+    public void block() {
+        this.vX = 0;
+        this.vY = 0;
+        this.vZ = 0;
+        
+        this.deltaRotX = 0;
+        this.deltaRotY = 0;
+        this.deltaRotZ = 0;
+    }
+    
+    public void forcePosition(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
     
   
