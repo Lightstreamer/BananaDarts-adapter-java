@@ -29,7 +29,6 @@ import com.croftsoft.core.math.axis.AxisAngleMut;
 
 public class BaseModelBody implements IBody {
 
-    private static final double ROTATE_DELTA    = 0.5;
     private static final double TRANSLATE_DELTA = 0.002;
     private static final double MAX_SIZE_X = 80;
     private static final double MAX_SIZE_Y = 45;
@@ -40,39 +39,32 @@ public class BaseModelBody implements IBody {
     private boolean landed = false;
     
     private double  x, y, z;                                // position         Vector3
-    
     private double  vX, vY, vZ;                             // velocity         Vector3
-    private final AxisAngleMut  axisAngle;                  // Spin             Quaternion/Matrix3x3
-    private double  deltaRotX, deltaRotY, deltaRotZ;        // angularMomentum  Vector3
     
     
-    private static final boolean READY = true;
-    private static final boolean FLYING = false;
-    private boolean status = READY;
+    private static final int READY = 1;
+    private static final int FLYING = 2;
+    private static final int GRABBED = 2;
+    private int status = READY;
 
     public BaseModelBody(String id) {
-        this(id,new AxisAngleImp(0.707,0,0,0.707),0,0,59);
+        this(id,0,0,59);
     }
     
     public BaseModelBody(BaseModelBody orig) {
-        this(orig.getId(),orig.getAxisAngle(),
-                orig.getX(),orig.getY(),orig.getZ(),
-                orig.getvX(),orig.getvY(),orig.getvZ(),
-                orig.getDeltaRotX(),orig.getDeltaRotY(),orig.getDeltaRotZ());
+        this(orig.getId(),
+                orig.getX(),orig.getY(),orig.getZ());
     }
     
-    public BaseModelBody(String id, AxisAngle axisAngle, double x, double y, double z) {
-        this(id,axisAngle,x,y,z,0,0,0,0,0,0);
+    public BaseModelBody(String id, double x, double y, double z) {
+        this(id,x,y,z,0,0,0);
     }
     
-    public BaseModelBody(String id, AxisAngle axisAngle, 
+    public BaseModelBody(String id, 
             double x, double y, double z, 
-            double vX, double vY, double vZ, 
-            double deltaRotX, double deltaRotY, double deltaRotZ) {
+            double vX, double vY, double vZ) {
         
         this.id = id;
-        
-        this.axisAngle = new AxisAngleImp(axisAngle);
         
         this.x = x;    
         this.y = y;
@@ -82,9 +74,6 @@ public class BaseModelBody implements IBody {
         this.vY = vY;
         this.vZ = vZ;
         
-        this.deltaRotX = deltaRotX;
-        this.deltaRotY = deltaRotY;
-        this.deltaRotZ = deltaRotZ;
         
         this.landed = false;
         
@@ -95,12 +84,7 @@ public class BaseModelBody implements IBody {
     public String getId() {
         return this.id;
     }
-    
-    @Override
-    public AxisAngle getAxisAngle() {
-        return axisAngle;
-    }
-    
+   
     @Override
     public double getX() {
         return x;
@@ -114,11 +98,6 @@ public class BaseModelBody implements IBody {
     @Override
     public double getZ() {
         return z;
-    }
-
-    @Override
-    public void setAxisAngle(AxisAngle axisAngle) {
-        this.axisAngle.copy( axisAngle );
     }
 
     @Override
@@ -148,54 +127,8 @@ public class BaseModelBody implements IBody {
         return vZ;
     }
 
-    public double getDeltaRotX() {
-        return deltaRotX;
-    }
-
-    public double getDeltaRotY() {
-        return deltaRotY;
-    }
-
-    public double getDeltaRotZ() {
-        return deltaRotZ;
-    }
-       
     // --> model transformations
-    
-    @Override
-    public void rotate(AxisAngle axisAngleRot) {
-        AxisAngleMut newAxisAngleMut = this.axisAngle.toQuat( ).multiply(axisAngleRot.toQuat()).toAxisAngle ( );
-
-        newAxisAngleMut.normalize ();
-
-        this.axisAngle.copy(newAxisAngleMut);
-    }
-
-    @Override
-    public void rotate(Axis axis, double degrees) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void rotate(Rotation rotation, double degrees) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void rotate() {
-        rotate ( new AxisAngleImp ( this.deltaRotX, 1, 0, 0 ) );
-        rotate ( new AxisAngleImp ( this.deltaRotY, 0, 1, 0 ) );
-        rotate ( new AxisAngleImp ( this.deltaRotZ, 0, 0, 1 ) );
-    }
-    
-    @Override
-    public void rotate(double factor) {
-        rotate ( new AxisAngleImp ( this.deltaRotX * factor, 1, 0, 0 ) );
-        rotate ( new AxisAngleImp ( this.deltaRotY * factor, 0, 1, 0 ) );
-        rotate ( new AxisAngleImp ( this.deltaRotZ * factor, 0, 0, 1 ) );
-    }
+   
     
     @Override
     public void translate(Axis axis, double distance) {
@@ -291,30 +224,6 @@ public class BaseModelBody implements IBody {
         }
     }
     
-    public void setTourque(Axis axis, double intensity) {
-        switch ( axis )
-        {
-            case X:
-                this.deltaRotX += (intensity * ROTATE_DELTA);
-                
-                break;
-                
-            case Y:
-                this.deltaRotY += (intensity  * ROTATE_DELTA);
-                
-                break;
-                
-            case Z:
-                this.deltaRotZ += (intensity  * ROTATE_DELTA);
-                
-                break;
-                
-            default:
-                throw new EnumUnknownException ( axis );
-        }
-    }
-    
-    
     
     // data extraction -->
     
@@ -335,11 +244,6 @@ public class BaseModelBody implements IBody {
             model.put("posY", toBase64(this.y));
             model.put("posZ", toBase64(this.z));
             
-            model.put("rotX", toBase64(this.axisAngle.toQuat().getX()));
-            model.put("rotY", toBase64(this.axisAngle.toQuat().getY()));
-            model.put("rotZ", toBase64(this.axisAngle.toQuat().getZ()));
-            model.put("rotW", toBase64(this.axisAngle.toQuat().getW()));
-            
         } catch (IOException e) {
             //TODO ?
         }
@@ -349,33 +253,89 @@ public class BaseModelBody implements IBody {
         model.put("dVx", String.valueOf(this.vX));
         model.put("dVy", String.valueOf(this.vY));
         model.put("dVz", String.valueOf(this.vZ));
-        
-        model.put("dRx", String.valueOf(this.deltaRotX));
-        model.put("dRy", String.valueOf(this.deltaRotY));
-        model.put("dRz", String.valueOf(this.deltaRotZ));
     }
 
     public void throwDart(double x2, double y2, double z2) {
+        if (this.status != GRABBED) {
+            //can't throw while not in hand
+            return;
+        }
+        this.status = FLYING;
+        
         this.setImpulse(IBody.Axis.X, x);
         this.setImpulse(IBody.Axis.Y, y);
         this.setImpulse(IBody.Axis.Z, z);
         
     }
     
-    public void block() {
+    public boolean block() {
+        if (this.status != READY) {
+            //can't grab while flying or already flying
+            return false;
+        }
+        
         this.vX = 0;
         this.vY = 0;
         this.vZ = 0;
         
-        this.deltaRotX = 0;
-        this.deltaRotY = 0;
-        this.deltaRotZ = 0;
+        return true;
     }
     
     public void forcePosition(double x, double y, double z) {
+        if (this.status != GRABBED) {
+            //can't move around while not in hand
+        }
+        
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+    
+    
+    
+    
+    //rotation is not handled -->
+
+    @Override
+    public AxisAngle getAxisAngle() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setAxisAngle(AxisAngle axisAngle) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void rotate(AxisAngle axisAngle) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void rotate(Axis axis, double degrees) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void rotate(Rotation rotation, double degrees) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void rotate() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void rotate(double factor) {
+        // TODO Auto-generated method stub
+        
     }
     
   
