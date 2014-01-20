@@ -24,8 +24,7 @@ import java.util.HashMap;
 
 import com.croftsoft.core.lang.EnumUnknownException;
 import com.croftsoft.core.math.axis.AxisAngle;
-import com.croftsoft.core.math.axis.AxisAngleImp;
-import com.croftsoft.core.math.axis.AxisAngleMut;
+import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class BaseModelBody implements IBody {
 
@@ -36,15 +35,13 @@ public class BaseModelBody implements IBody {
     
     private String id;
     
-    private boolean landed = false;
-    
     private double  x, y, z;                                // position         Vector3
     private double  vX, vY, vZ;                             // velocity         Vector3
     
     
     private static final int READY = 1;
     private static final int FLYING = 2;
-    private static final int GRABBED = 2;
+    private static final int GRABBED = 3;
     private int status = READY;
 
     public BaseModelBody(String id) {
@@ -73,9 +70,7 @@ public class BaseModelBody implements IBody {
         this.vX = vX;
         this.vY = vY;
         this.vZ = vZ;
-        
-        
-        this.landed = false;
+     
         
     }
     
@@ -170,7 +165,7 @@ public class BaseModelBody implements IBody {
     
     @Override
     public void translate(double factor) {
-        if (this.vZ == 0 && this.vY == 0 && this.vX == 0) {
+        if (this.status != FLYING) {
             //in hand
             return;
         }
@@ -178,17 +173,20 @@ public class BaseModelBody implements IBody {
         this.z += (double)(this.vZ * TRANSLATE_DELTA * factor);
         this.z = stopAtMax(this.z,MAX_SIZE_Z);
         if (this.z != -MAX_SIZE_Z) {
-            this.landed = false;
             
-            this.y += (double)(this.vY * TRANSLATE_DELTA * factor);
-            this.x += (double)(this.vX * TRANSLATE_DELTA * factor);
+            this.y += (double)(this.vY * TRANSLATE_DELTA * factor); 
+            this.x += (double)(this.vX * TRANSLATE_DELTA * factor); 
             
             this.y = stopAtMax(this.y,MAX_SIZE_Y);
-            this.x = stopAtMax(this.x,MAX_SIZE_Z);
+            this.x = stopAtMax(this.x,MAX_SIZE_X);
         
-        } else if (!this.landed) {
-            this.landed= true; 
+        } else {
             System.out.println("------------------------------>"+DartBoard.getScore(this.x, this.y));
+            this.vX = 0;
+            this.vY = 0;
+            this.vZ = 0;
+            
+            this.status = READY;
         }
         
     }
@@ -255,35 +253,45 @@ public class BaseModelBody implements IBody {
         model.put("dVz", String.valueOf(this.vZ));
     }
 
-    public void throwDart(double x2, double y2, double z2) {
+    public void throwDart(double x, double y, double z) throws CreditsException {
         if (this.status != GRABBED) {
-            //can't throw while not in hand
+            throw new CreditsException(-10, "Can't throw if not grabbed");
+        }
+        
+        if (z >= 0) {
+            //fail throw
             return;
         }
+        
         this.status = FLYING;
         
+     
         this.setImpulse(IBody.Axis.X, x);
         this.setImpulse(IBody.Axis.Y, y);
         this.setImpulse(IBody.Axis.Z, z);
         
     }
     
-    public boolean block() {
+    public void block() throws CreditsException {
         if (this.status != READY) {
             //can't grab while flying or already flying
-            return false;
+            throw new CreditsException(-11, "Can't grab while flying");
         }
+        this.status = GRABBED;
         
         this.vX = 0;
         this.vY = 0;
         this.vZ = 0;
-        
-        return true;
     }
     
-    public void forcePosition(double x, double y, double z) {
+    public void forcePosition(double x, double y, double z) throws CreditsException {
         if (this.status != GRABBED) {
-            //can't move around while not in hand
+            throw new CreditsException(-12, "Can't move around while not grabbed");
+        }
+        
+        if (z < 0) {
+            //you need to throw the dart!
+            throw new CreditsException(-13, "Are you trying to cheat? Throw your dart!");
         }
         
         this.x = x;
