@@ -28,7 +28,7 @@ import com.croftsoft.core.math.axis.AxisAngle;
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
-public class BaseModelBody implements IBody {
+public class Dart implements IBody {
 
     private static final double TRANSLATE_DELTA = 0.002;
     private static final double MAX_SIZE_X = 80;
@@ -49,20 +49,20 @@ public class BaseModelBody implements IBody {
     private World world;
     private User owner;
 
-    public BaseModelBody(User owner, String id,World world) {
+    public Dart(User owner, String id,World world) {
         this(owner,id,world,0,0,59);
     }
     
-    public BaseModelBody(User owner, BaseModelBody orig) {
+    public Dart(User owner, Dart orig) {
         this(owner,orig.getId(),orig.getWorld(),
                 orig.getX(),orig.getY(),orig.getZ());
     }
     
-    public BaseModelBody(User owner, String id, World world, double x, double y, double z) {
+    public Dart(User owner, String id, World world, double x, double y, double z) {
         this(owner,id,world,x,y,z,0,0,0);
     }
     
-    public BaseModelBody(User owner, String id, World world, 
+    public Dart(User owner, String id, World world, 
             double x, double y, double z, 
             double vX, double vY, double vZ) {
         
