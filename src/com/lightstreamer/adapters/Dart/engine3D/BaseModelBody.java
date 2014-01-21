@@ -21,9 +21,11 @@ package com.lightstreamer.adapters.Dart.engine3D;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.croftsoft.core.lang.EnumUnknownException;
 import com.croftsoft.core.math.axis.AxisAngle;
+import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class BaseModelBody implements IBody {
@@ -43,25 +45,35 @@ public class BaseModelBody implements IBody {
     private static final int FLYING = 2;
     private static final int GRABBED = 3;
     private int status = READY;
+    
+    private World world;
+    private User owner;
 
-    public BaseModelBody(String id) {
-        this(id,0,0,59);
+    public BaseModelBody(User owner, String id,World world) {
+        this(owner,id,world,0,0,59);
     }
     
-    public BaseModelBody(BaseModelBody orig) {
-        this(orig.getId(),
+    public BaseModelBody(User owner, BaseModelBody orig) {
+        this(owner,orig.getId(),orig.getWorld(),
                 orig.getX(),orig.getY(),orig.getZ());
     }
     
-    public BaseModelBody(String id, double x, double y, double z) {
-        this(id,x,y,z,0,0,0);
+    public BaseModelBody(User owner, String id, World world, double x, double y, double z) {
+        this(owner,id,world,x,y,z,0,0,0);
     }
     
-    public BaseModelBody(String id, 
+    public BaseModelBody(User owner, String id, World world, 
             double x, double y, double z, 
             double vX, double vY, double vZ) {
         
         this.id = id;
+        this.world = world;
+        this.owner = owner;
+        
+        Map<String,String> update = new HashMap<String,String>();
+        this.fillPositionMap(update);
+        this.fillImpulseMap(update);
+        this.owner.setExtraProps(update);
         
         this.x = x;    
         this.y = y;
@@ -78,6 +90,10 @@ public class BaseModelBody implements IBody {
     
     public String getId() {
         return this.id;
+    }
+    
+    private World getWorld() {
+        return this.world;
     }
    
     @Override
@@ -181,12 +197,18 @@ public class BaseModelBody implements IBody {
             this.x = stopAtMax(this.x,MAX_SIZE_X);
         
         } else {
-            System.out.println("------------------------------>"+DartBoard.getScore(this.x, this.y));
+            int score = DartBoard.getScore(this.x, this.y);
             this.vX = 0;
             this.vY = 0;
             this.vZ = 0;
             
-            this.status = READY;
+            this.changeStatus(READY);
+            
+            Map<String,String> update = new HashMap<String,String>();
+            this.fillImpulseMap(update);
+            this.owner.setExtraProps(update);
+            
+            this.world.sendPlayerScore(this.id,score);
         }
         
     }
@@ -236,7 +258,7 @@ public class BaseModelBody implements IBody {
         return s.substring(0, s.indexOf("="));
     }
     
-    public void fillPositionMap(HashMap<String,String> model) {
+    public void fillPositionMap(Map<String,String> model) {
         try {
             model.put("posX", toBase64(this.x));
             model.put("posY", toBase64(this.y));
@@ -247,10 +269,20 @@ public class BaseModelBody implements IBody {
         }
     }
     
-    public void fillImpulseMap(HashMap<String,String> model) {
+    public void fillImpulseMap(Map<String,String> model) {
         model.put("dVx", String.valueOf(this.vX));
         model.put("dVy", String.valueOf(this.vY));
         model.put("dVz", String.valueOf(this.vZ));
+        
+        model.put("locked", String.valueOf(this.status == FLYING));
+    }
+    
+    private void changeStatus(int newStatus) {
+        if (this.status == newStatus) {
+            return;
+        }
+        
+        this.status = newStatus;
     }
 
     public void throwDart(double x, double y, double z) throws CreditsException {
@@ -260,15 +292,18 @@ public class BaseModelBody implements IBody {
         
         if (z >= 0) {
             //fail throw
+            this.changeStatus(READY);
             return;
         }
-        
-        this.status = FLYING;
-        
+        this.changeStatus(FLYING);
      
         this.setImpulse(IBody.Axis.X, x);
         this.setImpulse(IBody.Axis.Y, y);
         this.setImpulse(IBody.Axis.Z, z);
+        
+        Map<String,String> update = new HashMap<String,String>();
+        this.fillImpulseMap(update);
+        this.owner.setExtraProps(update);
         
     }
     
@@ -277,11 +312,16 @@ public class BaseModelBody implements IBody {
             //can't grab while flying or already flying
             throw new CreditsException(-11, "Can't grab while flying");
         }
-        this.status = GRABBED;
+        this.changeStatus(GRABBED);
         
         this.vX = 0;
         this.vY = 0;
         this.vZ = 0;
+        
+        Map<String,String> update = new HashMap<String,String>();
+        this.fillImpulseMap(update);
+        this.owner.setExtraProps(update);
+        
     }
     
     public void forcePosition(double x, double y, double z) throws CreditsException {
@@ -297,6 +337,11 @@ public class BaseModelBody implements IBody {
         this.x = x;
         this.y = y;
         this.z = z;
+        
+        Map<String,String> update = new HashMap<String,String>();
+        this.fillPositionMap(update);
+        this.owner.setExtraProps(update);
+        
     }
     
     

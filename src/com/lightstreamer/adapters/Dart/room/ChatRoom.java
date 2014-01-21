@@ -3,6 +3,7 @@ package com.lightstreamer.adapters.Dart.room;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -15,7 +16,7 @@ public class ChatRoom {
     private static final boolean ENTER = true;
     private static final boolean EXIT = false;
     
-    private static final boolean REALTIME = true;
+    static final boolean REALTIME = true;
     private static final boolean SNAPSHOT = false;
     
     
@@ -30,7 +31,7 @@ public class ChatRoom {
     
     public User addUser(final String id) {
         synchronized(users) {
-            User user = new User(id);
+            User user = new User(this, id);
             users.put(id, user);
             
             executor.execute(new Runnable() {
@@ -117,7 +118,9 @@ public class ChatRoom {
             User user = this.getUserForced(id);
             user.setStatusHandle(userStatusHandle);
             
-            this.sendUserStatusEvent(id, user.getNick(), user.getStatusId(), user.getStatus(), userStatusHandle, SNAPSHOT);
+            Map<String,String> extra = new HashMap<String,String>();
+            extra.putAll(user.getExtraProps());
+            this.sendUserStatusEvent(user, user.getNick(), user.getStatusId(), user.getStatus(), extra, userStatusHandle, SNAPSHOT);
         }
     }
     
@@ -185,10 +188,10 @@ public class ChatRoom {
     }
         
     //synchronized(users) {
-    private void sendUserStatusEvent(final String id, final String nick, final String statusId, final String status, final Object userStatusHandle, final boolean realTimeEvent) {
+    void sendUserStatusEvent(final User user, final String nick, final String statusId, final String status, final Map<String,String> extra, final Object userStatusHandle, final boolean realTimeEvent) {
         executor.execute(new Runnable() {
             public void run() {
-                listener.onUserStatusChange(id, nick, statusId, status, userStatusHandle, realTimeEvent);
+                listener.onUserStatusChange(user, nick, statusId, status, extra, userStatusHandle, realTimeEvent);
             }
         });
     }
@@ -216,7 +219,8 @@ public class ChatRoom {
             Iterator<String> roomUsers = room.getUsers();
             while(roomUsers.hasNext()) {
                 String id = roomUsers.next();
-                this.sendRoomStatusEvent(id,roomId,roomStatusHandle,ENTER,SNAPSHOT);
+                User user = this.getUserForced(id);
+                this.sendRoomStatusEvent(user,roomId,roomStatusHandle,ENTER,SNAPSHOT);
             }
 
             executor.execute(new Runnable() {
@@ -241,17 +245,17 @@ public class ChatRoom {
     }
 
     //synchronized(rooms) {
-    private void sendRoomStatusEvent(final String id, final String roomId, final Object roomStatusHandle, boolean entering, final boolean realTimeEvent) {
+    private void sendRoomStatusEvent(final User user, final String roomId, final Object roomStatusHandle, boolean entering, final boolean realTimeEvent) {
         if (entering) {
             executor.execute(new Runnable() {
                 public void run() {
-                    listener.onUserEnter(id, roomId, roomStatusHandle, realTimeEvent);
+                    listener.onUserEnter(user, roomId, roomStatusHandle, realTimeEvent);
                 }
             });
         } else {
             executor.execute(new Runnable() {
                 public void run() {
-                    listener.onUserExit(id, roomId, roomStatusHandle);
+                    listener.onUserExit(user, roomId, roomStatusHandle);
                 }
             });
         }
@@ -259,86 +263,7 @@ public class ChatRoom {
     
    
     
-    private class User {
-
-        private String id;
-        private String nick;
-        private String statusId = "";
-        private String status = "";
-        
-        private Object statusHandle = null;
-        private Object messagesHandle = null;
-        
-        private Set<Room> rooms = new HashSet<Room>();
-        
-        
-        public User(String id) {
-            this.id = id;
-        }
-        
-        public Object getStatusHandle() {
-            return this.statusHandle;
-        }
-
-        public void enterRoom(Room room) {
-            room.addUser(this.id);
-            this.rooms.add(room);
-        }
-
-        public void leaveRoom(Room room) {
-            room.removeUser(this.id);
-            this.rooms.remove(room);
-        }
-
-        public String getStatusId() {
-            return this.statusId;
-        }
-
-        public void setNick(String nick) {
-            this.nick = nick;
-            
-            if (this.statusHandle != null) {
-                sendUserStatusEvent(this.id, this.nick, null, null, this.statusHandle, REALTIME);
-            }
-        }
-        
-        public void setStatus(String status, String statusId) {
-            this.status = status;
-            this.statusId = statusId;
-            
-            if (this.statusHandle != null) {
-                sendUserStatusEvent(this.id, null, this.statusId, this.status, this.statusHandle, REALTIME);
-            }
-        }
-        
-        public boolean isListened() {
-            return this.statusHandle != null || this.messagesHandle != null;
-        }
-        
-        public String getNick() {
-            return this.nick;
-        }
-
-        public String getStatus() {
-            return this.status;
-        }
-        
-        public void setStatusHandle(Object statusHandle) {
-            this.statusHandle = statusHandle;
-        }
-
-        public void setHandle(Object messagesHandle) {
-            this.messagesHandle = messagesHandle;
-        }
-        
-        public Iterator<Room> getRooms() {
-            return rooms.iterator();
-        }
-        
-       
-    }
-    
-    private class Room {
+    class Room {
         
         private String roomId;
         private Set<String> users = new HashSet<String>();
@@ -365,16 +290,16 @@ public class ChatRoom {
             this.messageHandle = messageHandle;
         }
         
-        void addUser(String id) {
-            this.users.add(id);
+        void addUser(User user) {
+            this.users.add(user.getId());
             if (this.statusHandle != null) {
-                sendRoomStatusEvent(id, this.roomId, this.statusHandle, ENTER, REALTIME);
+                sendRoomStatusEvent(user, this.roomId, this.statusHandle, ENTER, REALTIME);
             }
         }
 
-        void removeUser(String id) {
-            if (this.users.remove(id) && this.statusHandle != null ) {
-                sendRoomStatusEvent(id, this.roomId, this.statusHandle, EXIT, REALTIME);
+        void removeUser(User user) {
+            if (this.users.remove(user.getId()) && this.statusHandle != null ) {
+                sendRoomStatusEvent(user, this.roomId, this.statusHandle, EXIT, REALTIME);
             }
         }
         
