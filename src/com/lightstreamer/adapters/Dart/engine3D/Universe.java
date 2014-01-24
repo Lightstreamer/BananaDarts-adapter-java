@@ -82,6 +82,24 @@ public class Universe {
 
     }
     
+    public void stopWatchingWorldScore(String id) {
+        if (!worlds.containsKey(id)) {
+            return;
+        }
+        World world = worlds.get(id);
+        world.setScoreHandle(null);
+        
+        this.verifyWorld(id,world);
+        
+    }
+
+    public void startWatchingWorldScore(String id, Object handle) {
+        World world = this.getWorldForced(id);
+        
+        world.setScoreHandle(handle);
+    }
+    
+    
     private synchronized void verifyWorld(String id, World world) {
         if (world.isEmpty() && !world.isListened()) {
             world.armageddon();
@@ -112,6 +130,5 @@ public class Universe {
         World world = worlds.get(worldId);
         world.move(playerId,x,y,z);
     }
-    
 
 }

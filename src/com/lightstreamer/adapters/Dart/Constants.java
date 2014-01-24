@@ -17,12 +17,13 @@ package com.lightstreamer.adapters.Dart;
 
 public class Constants {
 
-    public static String USER_SUBSCRIPTION = "user_";
-    public static String ROOMPOSITION_SUBSCRIPTION = "roompos_";
-    public static String ROOMCHATLIST_SUBSCRIPTION = "roomchatlist_";
+    public static final String USER_SUBSCRIPTION = "user_";
+    public static final String ROOMPOSITION_SUBSCRIPTION = "roompos_";
+    public static final String ROOMCHATLIST_SUBSCRIPTION = "roomchatlist_";
+    public static final String ROOMSCORE_SUBSCRIPTION = "roomscore_";
     
-    public static String SPLIT_CHAR_REG = "\\|";
-    public static String SPLIT_CHAR = "|";
+    public static final String SPLIT_CHAR_REG = "\\|";
+    public static final String SPLIT_CHAR = "|";
     
     public static final String LOGGER_CAT = "LS_demos_Logger.LeapDemo";
     //private static final String TRACER_CAT = "LS_LeapDemo_Logger.tracer";
@@ -41,6 +42,7 @@ public class Constants {
     
     public static final int BASE_RATE = 10;
     public static final int FRAME_INTERVAL = 50;
+
     
     
     public static String getVal(String original, String type) {

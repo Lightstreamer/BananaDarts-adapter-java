@@ -27,4 +27,6 @@ public interface UniverseListener {
     
     void onPlayerMoved(String id, String worldId, Object worldHandle,  HashMap<String,String> currentPosition);
 
+    void onPlayerScore(String id, int score, String worldId, Object scoreHandle);
+
 }

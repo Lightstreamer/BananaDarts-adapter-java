@@ -100,8 +100,10 @@ public class DartDataAdapter implements SmartDataProvider, UniverseListener, Cha
             return true;
         } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0) {
             return true;
+        } else if (item.indexOf(Constants.ROOMSCORE_SUBSCRIPTION) == 0) {
+            return false; //we do not generate snasphot event TODO shall we?
         } else {
-            return true; 
+            return true;
         }
     }
 
@@ -132,7 +134,12 @@ public class DartDataAdapter implements SmartDataProvider, UniverseListener, Cha
             
             String roomId = item.substring(Constants.ROOMCHATLIST_SUBSCRIPTION.length());
             chat.startRoomListen(roomId,handle);// will add the room if non-existent (room may exist if a user entered it even if no one is listening to it)
-
+        
+        } else  if (( val = Constants.getVal(item,Constants.ROOMSCORE_SUBSCRIPTION)) != null) {
+            logger.debug("Score subscription: " + item);
+            
+            universe.startWatchingWorldScore(val, handle);
+            
         } else {
             //MERGE subscription for user status and nick + their commands and forced positions 
             logger.debug("User status subscription: " + item);
@@ -165,6 +172,11 @@ public class DartDataAdapter implements SmartDataProvider, UniverseListener, Cha
             
             String roomId = item.substring(Constants.ROOMCHATLIST_SUBSCRIPTION.length());
             chat.stopRoomListen(roomId);
+        
+        } else  if (( val = Constants.getVal(item,Constants.ROOMSCORE_SUBSCRIPTION)) != null) {
+            logger.debug("Score unsubscription: " + item);
+            universe.stopWatchingWorldScore(val);
+            
         } else {
             logger.debug("User status unsubscription: " + item);
             
@@ -297,6 +309,18 @@ public class DartDataAdapter implements SmartDataProvider, UniverseListener, Cha
             update.put(SmartDataProvider.COMMAND_FIELD, SmartDataProvider.DELETE_COMMAND);
             
             this.listener.smartUpdate(worldHandle, update, false);
+        }
+    }
+    
+    @Override
+    public void onPlayerScore(String id, int score, String worldId, Object scoreHandle) {
+        logger.debug("new score " + worldId);
+        if (scoreHandle != null) {
+            HashMap<String, String> update = new HashMap<String, String>();
+            update.put("id", id);
+            update.put("score", String.valueOf(score));
+            
+            this.listener.smartUpdate(scoreHandle, update, false);
         }
     }
     

@@ -17,7 +17,6 @@ package com.lightstreamer.adapters.Dart.engine3D;
 
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -43,13 +42,14 @@ public class World extends Thread {
     
     private ConcurrentHashMap<String,Dart> darts = new ConcurrentHashMap<String,Dart>();
     private Object handle = null;
-    
+    private Object scoreHandle = null;
     
 
     private int frameInterval = 0;
     private double factorWorld = 1.0;
     
     private boolean stop = false;
+    
     
     World(String id, UniverseListener listener, int frameInterval)  {
         this.id = id;
@@ -65,7 +65,7 @@ public class World extends Thread {
     }
 
     synchronized boolean isListened() {
-        return this.handle != null;
+        return this.handle != null || this.scoreHandle != null;
     }
     
     synchronized boolean isEmpty() {
@@ -90,6 +90,11 @@ public class World extends Thread {
                 }
             });
         }
+    }
+    
+    synchronized void setScoreHandle(Object handle) {
+        this.scoreHandle = handle;
+        //TODO snapshot?
     }
     
     synchronized void addUser(User user) {
@@ -172,31 +177,19 @@ public class World extends Thread {
     
     
     
-    public synchronized void sendPlayerScore(final String playerId, int score) {
+    public synchronized void sendPlayerScore(final String playerId, final int score) {
         if (!this.darts.containsKey(playerId)) {
             return;
         }
-        /*final Dart player = this.darts.get(playerId);
+        
         final String worldId = this.id;
-        final Object worldHandle = this.handle;*/
-        
-      
-        
-        
-        System.out.println("Score -------------------------------------> " + score);
-        
-        /*
-        TODO 
-        final HashMap<String, String> newScore = new HashMap<String, String>();
-        newScore.put("score", String.valueOf(score));
-        
+        final Object worldHandle = this.scoreHandle;
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                listener.onPlayerScored(id, worldId, worldHandle, newScore);
+                listener.onPlayerScore(playerId, score, worldId, worldHandle);
             } 
         });
-        */
     }
 
     public synchronized void block(String playerId) throws CreditsException {

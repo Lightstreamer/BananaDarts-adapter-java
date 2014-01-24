@@ -127,6 +127,8 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
         } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0  && mode == Mode.COMMAND) {
             return true;
             
+        } else if (item.indexOf(Constants.ROOMSCORE_SUBSCRIPTION) == 0  && mode == Mode.DISTINCT) {
+            return true;
         }
         
         return mode == Mode.MERGE;
