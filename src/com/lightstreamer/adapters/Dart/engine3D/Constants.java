@@ -10,6 +10,8 @@ public class Constants {
     //room height --> 300 cm --> 1333
     //room width --> 150 cm --> 666
     
+    //Dart length (can't find info, but it seems a little longer than the triple-score circle that's 94) --> 96*scale
+    
     
     public static final double SCALE = 0.20;
     
