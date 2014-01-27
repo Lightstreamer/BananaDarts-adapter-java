@@ -28,9 +28,7 @@ import com.lightstreamer.interfaces.metadata.CreditsException;
 public class Dart implements IBody {
 
     private static final double TRANSLATE_DELTA = 0.002;
-    private static final double MAX_SIZE_X = 80;
-    private static final double MAX_SIZE_Y = 45;
-    private static final double MAX_SIZE_Z = 80;
+   
     
     private String id;
     
@@ -67,11 +65,6 @@ public class Dart implements IBody {
         this.world = world;
         this.owner = owner;
         
-        Map<String,String> update = new HashMap<String,String>();
-        this.fillPositionMap(update);
-        this.fillImpulseMap(update);
-        this.owner.setExtraProps(update);
-        
         this.x = x;    
         this.y = y;
         this.z = z;
@@ -79,6 +72,13 @@ public class Dart implements IBody {
         this.vX = vX;
         this.vY = vY;
         this.vZ = vZ;
+        
+        Map<String,String> update = new HashMap<String,String>();
+        this.fillPositionMap(update);
+        this.fillImpulseMap(update);
+        this.owner.setExtraProps(update);
+        
+        
      
         
     }
@@ -183,31 +183,48 @@ public class Dart implements IBody {
             return;
         }
         
-        this.z += (double)(this.vZ * TRANSLATE_DELTA * factor);
-        this.z = stopAtMax(this.z,MAX_SIZE_Z);
-        if (this.z != -MAX_SIZE_Z) {
-            
-            this.y += (double)(this.vY * TRANSLATE_DELTA * factor); 
-            this.x += (double)(this.vX * TRANSLATE_DELTA * factor); 
-            
-            this.y = stopAtMax(this.y,MAX_SIZE_Y);
-            this.x = stopAtMax(this.x,MAX_SIZE_X);
+        //this.setImpulse(IBody.Axis.Y, this.vY-10);
+        //this.vY-=100;
         
-        } else {
-            int score = DartBoard.getScore(this.x, this.y);
-            this.vX = 0;
-            this.vY = 0;
-            this.vZ = 0;
-            
-            this.changeStatus(READY);
-            
-            Map<String,String> update = new HashMap<String,String>();
-            this.fillImpulseMap(update);
-            this.owner.setExtraProps(update);
-            
-            this.world.sendPlayerScore(this.id,score);
+       if ( this.vZ != 0) {
+           double g = 500 * TRANSLATE_DELTA * factor;
+           this.vY -= g;
         }
         
+        this.z += (double)(this.vZ * TRANSLATE_DELTA * factor);
+        this.z = stopAtMax(this.z,Constants.MAX_SIZE_Z);
+        if (this.z != -Constants.MAX_SIZE_Z) {
+            
+            this.y += (double)(this.vY * TRANSLATE_DELTA * factor); 
+            this.y = stopAtMax(this.y,Constants.MAX_SIZE_Y);
+            
+            if (this.y != -Constants.MAX_SIZE_Y) {
+                this.x += (double)(this.vX * TRANSLATE_DELTA * factor); 
+                this.x = stopAtMax(this.x,Constants.MAX_SIZE_X);
+               
+            } else {
+                this.stopDart(0);
+                
+            }
+        } else {
+            int score = DartBoard.getScore(this.x, this.y);
+            this.stopDart(score);
+        }
+        
+    }
+    
+    public void stopDart(int score) {
+        this.vX = 0;
+        this.vY = 0;
+        this.vZ = 0;
+        
+        this.changeStatus(READY);
+        
+        Map<String,String> update = new HashMap<String,String>();
+        this.fillImpulseMap(update);
+        this.owner.setExtraProps(update);
+
+        this.world.sendPlayerScore(this.id,score);
     }
     
     @Override
@@ -326,7 +343,7 @@ public class Dart implements IBody {
             throw new CreditsException(-12, "Can't move around while not grabbed");
         }
         
-        if (z < 0) {
+        if (z < Constants.ARM_REACH) {
             //you need to throw the dart!
             throw new CreditsException(-13, "Are you trying to cheat? Throw your dart!");
         }
