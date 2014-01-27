@@ -17,6 +17,7 @@ package com.lightstreamer.adapters.Dart.engine3D;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -277,6 +278,7 @@ public class Dart implements IBody {
             model.put("posX", toBase64(this.x));
             model.put("posY", toBase64(this.y));
             model.put("posZ", toBase64(this.z));
+            model.put("timestamp", String.valueOf(new Date().getTime()));
             
         } catch (IOException e) {
             //TODO ?
