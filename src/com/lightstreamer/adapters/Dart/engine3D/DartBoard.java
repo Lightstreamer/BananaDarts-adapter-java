@@ -38,12 +38,12 @@ public class DartBoard {
     
     
     private static Circle[] circles = {
-      new Circle(0,0,6*Constants.SCALE/2),
-      new Circle(0,0,14*Constants.SCALE/2),
-      new Circle(0,0,86*Constants.SCALE/2),
-      new Circle(0,0,94*Constants.SCALE/2),
-      new Circle(0,0,140*Constants.SCALE/2),
-      new Circle(0,0,150*Constants.SCALE/2)
+      new Circle(0,Constants.CENTER_Y,6*Constants.SCALE/2),
+      new Circle(0,Constants.CENTER_Y,14*Constants.SCALE/2),
+      new Circle(0,Constants.CENTER_Y,86*Constants.SCALE/2),
+      new Circle(0,Constants.CENTER_Y,94*Constants.SCALE/2),
+      new Circle(0,Constants.CENTER_Y,140*Constants.SCALE/2),
+      new Circle(0,Constants.CENTER_Y,150*Constants.SCALE/2)
     };
     
     private static int circleValues[] = {
@@ -62,7 +62,7 @@ public class DartBoard {
         int inc = 360/20;
         int shift = inc/2;
         for (int i=0; i<20; i++) {
-            slices[i] = new Arc2D.Double(-75*Constants.SCALE,-75*Constants.SCALE,150*Constants.SCALE,150*Constants.SCALE,inc*i-shift,18,Arc2D.PIE);
+            slices[i] = new Arc2D.Double(-75*Constants.SCALE,-Constants.CENTER_Y-75*Constants.SCALE,150*Constants.SCALE,150*Constants.SCALE,inc*i-shift,18,Arc2D.PIE);
         }
     }
     
