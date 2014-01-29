@@ -46,7 +46,7 @@ public class Dart implements IBody {
     private User owner;
 
     public Dart(User owner, String id,World world) {
-        this(owner,id,world,0,0,59);
+        this(owner,id,world,0,0,Constants.MAX_SIZE_Z);
     }
     
     public Dart(User owner, Dart orig) {
