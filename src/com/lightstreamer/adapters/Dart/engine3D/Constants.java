@@ -3,24 +3,36 @@ package com.lightstreamer.adapters.Dart.engine3D;
 public class Constants {
 
     //Real-world 
-    //Dartboard diameter 18 inches    ---> 45.72 cm  --> 200*scale
-    //Dartboard positioning 5 feet. 8 inches from floor to the center of the bull's-eye -->   152.4 + 20.32 cm --> 769*scale -->NB floor is @ 1333/2*scale -> (769-1333/2)*scale 
-    //Distance from front of the dartboard to the throwing line: 7 feet 9 1/4  inches. ---> 213.36 + 23.49500 --> 1053*scale
-    //Human arm 25 inches --> 63.5 cm --> half arm 32 cm --> 142
-    //room height --> 300 cm --> 1333
-    //room width --> 150 cm --> 666
+    //Dartboard diameter 18 inches    ---> 45.72 cm  --> 200*scale --> this is the base conversion thus to convert cm to our unit do -> 200/45.72 * val -> 4.37445319335 * val
+    //Dartboard positioning 5 feet. 8 inches from floor to the center of the bull's-eye -->   152.4 + 20.32 cm --> 172.2 cm
+    //Distance from front of the dartboard to the throwing line: 7 feet 9 1/4  inches. ---> 213.36 + 23.49500 --> 236.855 cm
+    //Human arm 25 inches --> 63.5 cm --> half arm 32 cm 
+    //room height --> 300 cm 
+    //room width --> 150 cm
+    //speed --> 1mm/s
     
     //Dart length (can't find info, but it seems a little longer than the triple-score circle that's 94) --> 96*scale
     
     
+  //why didn't we use only positive positions?
+    
+    private static double cmToUnit(double cm) {
+        return cm*4.37445319335;
+    }
+    
     public static final double SCALE = 0.20;
     
-    public static final double MAX_SIZE_X = 1333/2*SCALE;
-    public static final double MAX_SIZE_Y = 666/2*SCALE;
-    public static final double MAX_SIZE_Z = 1053/2*SCALE;
+    public static final double MAX_SIZE_X = cmToUnit(300/2)*SCALE; 
+    public static final double MAX_SIZE_Y = cmToUnit(150/2)*SCALE;
+    public static final double MAX_SIZE_Z = cmToUnit(236.855/2)*SCALE; //represents half the length of the room
     
-    public static final double CENTER_Y = 769*Constants.SCALE - MAX_SIZE_X;
+    public static final double CENTER_Y = cmToUnit(172.2)*Constants.SCALE - MAX_SIZE_X; //NB floor is @ MAX_SIZE_X units from the bottom of the room
     
-    public static final double ARM_REACH = MAX_SIZE_Z - 142*SCALE;
+    public static final double ARM_REACH = MAX_SIZE_Z - cmToUnit(32)*SCALE;
+
+    public static final int BASE_RATE = 10;
+    public static final int FRAME_INTERVAL = 50;
+
+    static final double TRANSLATE_DELTA = 0.002;
     
 }

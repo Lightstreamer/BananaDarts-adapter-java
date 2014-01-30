@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import com.lightstreamer.adapters.Dart.Constants;
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 

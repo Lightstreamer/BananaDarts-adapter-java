@@ -28,9 +28,6 @@ import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class Dart implements IBody {
 
-    private static final double TRANSLATE_DELTA = 0.002;
-   
-    
     private String id;
     
     private double  x, y, z;                                // position         Vector3
@@ -188,19 +185,19 @@ public class Dart implements IBody {
         //this.vY-=100;
         
        if ( this.vZ != 0) {
-           double g = 500 * TRANSLATE_DELTA * factor;
+           double g = 500 * Constants.TRANSLATE_DELTA * factor;
            this.vY -= g;
         }
         
-        this.z += (double)(this.vZ * TRANSLATE_DELTA * factor);
+        this.z += (double)(this.vZ * Constants.TRANSLATE_DELTA * factor);
         this.z = stopAtMax(this.z,Constants.MAX_SIZE_Z);
         if (this.z != -Constants.MAX_SIZE_Z) {
             
-            this.y += (double)(this.vY * TRANSLATE_DELTA * factor); 
+            this.y += (double)(this.vY * Constants.TRANSLATE_DELTA * factor); 
             this.y = stopAtMax(this.y,Constants.MAX_SIZE_Y);
             
             if (this.y != -Constants.MAX_SIZE_Y) {
-                this.x += (double)(this.vX * TRANSLATE_DELTA * factor); 
+                this.x += (double)(this.vX * Constants.TRANSLATE_DELTA * factor); 
                 this.x = stopAtMax(this.x,Constants.MAX_SIZE_X);
                
             } else {

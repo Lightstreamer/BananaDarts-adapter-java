@@ -25,7 +25,7 @@ public class Constants {
     public static final String SPLIT_CHAR_REG = "\\|";
     public static final String SPLIT_CHAR = "|";
     
-    public static final String LOGGER_CAT = "LS_demos_Logger.LeapDemo";
+    public static final String LOGGER_CAT = "LS_demos_Logger.DartDemo";
     //private static final String TRACER_CAT = "LS_LeapDemo_Logger.tracer";
     
     public static final String USER_ID = "USER_ID";
@@ -39,11 +39,6 @@ public class Constants {
     public static final String GRAB_MESSAGE = "grab|";
     public static final String RELEASE_MESSAGE = "release|";
     public static final String MOVE_MESSAGE = "move|";
-    
-    public static final int BASE_RATE = 10;
-    public static final int FRAME_INTERVAL = 50;
-
-    
     
     public static String getVal(String original, String type) {
         if(original.indexOf(type) == 0) {

@@ -30,6 +30,7 @@ public class DartBoard {
     //  86
     //  14
     //   6
+    // these diameters were measured directly on unit (no translation from cm)
     // *scale = 0.20
     
    

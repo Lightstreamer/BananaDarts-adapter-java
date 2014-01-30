@@ -20,13 +20,12 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.lightstreamer.adapters.Dart.Constants;
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class Universe {
     
-    public static Logger logger = Logger.getLogger(Constants.LOGGER_CAT);
+    public static Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.LOGGER_CAT);
     
     private Map<String,World> worlds = new HashMap<String,World>();
 
