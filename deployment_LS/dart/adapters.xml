@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<adapters_conf id="DART">
+    <metadata_provider>
+        <adapter_class>com.lightstreamer.adapters.Dart.DartMetaDataAdapter</adapter_class>
+    </metadata_provider>
+    
+    <data_provider>
+        <adapter_class>com.lightstreamer.adapters.Dart.DartDataAdapter</adapter_class>
+    </data_provider>
+</adapters_conf>
