@@ -178,12 +178,12 @@ public class Dart implements IBody {
         long tNow = new Date().getTime() - this.timestamp;
 
         double x = this.calculateAxisPos(this.startX,this.vX,tNow);
-        double y = this.calculateAxisPos(this.startY,this.vY,tNow);
+        double y = this.calculateYPosition(this.startY,this.vY,tNow);
         double z = this.calculateAxisPos(this.startZ,this.vZ,tNow);
         
-        double endXt = this.getFinalTimeIfOverflow(x, Constants.MAX_SIZE_X, this.startX, this.vX);
-        double endYt = this.getFinalTimeIfOverflow(y, Constants.MAX_SIZE_Y, this.startY, this.vY);
-        double endZt = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z, this.startZ, this.vZ);
+        double endXt = this.getFinalTimeIfOverflow(x, Constants.MAX_SIZE_X, this.startX, this.vX,false);
+        double endYt = this.getFinalTimeIfOverflow(y, Constants.MAX_SIZE_Y, this.startY, this.vY,true);
+        double endZt = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z, this.startZ, this.vZ,false);
         
         int score = -1;
         if (endXt != -1 || endYt != -1 || endZt != -1) {
@@ -197,7 +197,7 @@ public class Dart implements IBody {
             tEnd = tEnd == -1 || endZt != -1 && endZt < tEnd ? endZt : tEnd;
             
             x = this.calculateAxisPos(this.startX,this.vX,tEnd);
-            y = this.calculateAxisPos(this.startY,this.vY,tEnd);
+            y = this.calculateYPosition(this.startY,this.vY,tEnd);
             z = this.calculateAxisPos(this.startZ,this.vZ,tEnd);
             
             if (scored) {
@@ -226,32 +226,34 @@ public class Dart implements IBody {
         return start + speed*time; //TODO gravity
     }
     
-    private double calculateZPosition(double start, double speed, double time) {
+    private double calculateYPosition(double start, double speed, double time) {
         //s = v*t + (1/2)at^2
         double units = Constants.HALF_ACCELERATION*Math.pow(time,2);
         
-        return this.calculateAxisPos(this.startZ,this.vZ,time) + units;
+        return this.calculateAxisPos(this.startY,this.vY,time) - units;
     }
 
-    private double getFinalTimeIfOverflow(double val, double max, double start, double speed) {
-        //TODO gravity
-        if (val > max ) {
-            return calculateTimestamp(max,start,speed);//Math.abs((max-start)/speed);
-        } else if(val < -max) {
-            return calculateTimestamp(-max,start,speed); //return  Math.abs((-max-start)/speed);
-        } else {
-            return -1;
-        }
+    private double getFinalTimeIfOverflow(double val, double max, double start, double speed, boolean gravity) {
+        if (val > max || val < -max) {
+            if (gravity) {
+                return this.calculateTimestampY(val);
+            } else if (val > max ) {
+                return calculateTimestamp(max,start,speed);//Math.abs((max-start)/speed);
+            } else if(val < -max) {
+                return calculateTimestamp(-max,start,speed); //return  Math.abs((-max-start)/speed);
+            }
+        }    
+        return -1;
     }
     
     private double calculateTimestamp(double value, double start, double speed) {
         return Math.abs((value-start)/speed);
     }
     
-    private double calculateTimestampZ(double value) {
-        double c = -(value-this.startZ);
+    private double calculateTimestampY(double value) {
+        double c = -(value-this.startY);
         double a = Constants.HALF_ACCELERATION;
-        double b = this.vZ;
+        double b = this.vY;
         if (c<0) {
           return (-b + Math.sqrt(Math.pow(b,2)-4*a*c))/(2*a);
         } else if (c>0) {
