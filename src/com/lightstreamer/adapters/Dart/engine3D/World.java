@@ -16,7 +16,6 @@ Copyright 2014 Weswit s.r.l.
 package com.lightstreamer.adapters.Dart.engine3D;
 
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -26,26 +25,17 @@ import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class World extends Thread {
     
-    private static final int ENTER = 1;
-    private static final int EXIT = 2;
-    
-    
-    private static final boolean REALTIME = true;
-    private static final boolean SNAPSHOT = false;
-    
-    
+ 
     private Executor executor =  Executors.newSingleThreadExecutor();
 
     private String id;
     private UniverseListener listener;
     
     private ConcurrentHashMap<String,Dart> darts = new ConcurrentHashMap<String,Dart>();
-    private Object handle = null;
     private Object scoreHandle = null;
     
 
     private int frameInterval = 0;
-    private double factorWorld = 1.0;
     
     private boolean stop = false;
     
@@ -55,40 +45,18 @@ public class World extends Thread {
         this.listener = listener;
         
         this.frameInterval = frameInterval;
-        this.factorWorld = (double)(this.frameInterval / Constants.BASE_RATE);
     }
     
     synchronized void setFrameInterval(int frameInterval) {
         this.frameInterval = frameInterval;
-        this.factorWorld = (double)(this.frameInterval / Constants.BASE_RATE);
     }
 
     synchronized boolean isListened() {
-        return this.handle != null || this.scoreHandle != null;
+        return this.scoreHandle != null;
     }
     
     synchronized boolean isEmpty() {
         return darts.isEmpty();
-    }
-    
-    synchronized void setHandle(Object handle) {
-        this.handle = handle;
-        
-        if (this.handle != null) {
-            Enumeration<Dart> players = this.darts.elements();
-            while(players.hasMoreElements()) {
-                Dart player = players.nextElement();
-                this.sendPlayerStatus(player.getId(), this.id, this.handle, player, ENTER, SNAPSHOT);
-            }
-            
-            final String fid = this.id;
-            final Object fhandle = this.handle;
-            executor.execute(new Runnable() {
-                public void run() {
-                    listener.onWorldComplete(fid,fhandle);
-                }
-            });
-        }
     }
     
     synchronized void setScoreHandle(Object handle) {
@@ -104,13 +72,12 @@ public class World extends Thread {
         Dart player = new Dart(user,id,this);
         
         this.darts.put(id,player); 
-        this.sendPlayerStatus(id, this.id, this.handle, player, ENTER, REALTIME);
     }
     
 
     synchronized void removeUser(String id) {
         this.darts.remove(id);
-        this.sendPlayerStatus(id, this.id, this.handle, null, EXIT, REALTIME);
+        //this.sendPlayerStatus(id, this.id, this.handle, null, EXIT, REALTIME);
     }
     
     synchronized void armageddon() {
@@ -125,10 +92,10 @@ public class World extends Thread {
             Enumeration<Dart> players = this.darts.elements();
             while(players.hasMoreElements()) {
                 Dart player = players.nextElement();
-                              
-                player.translate(this.factorWorld);
-                
-                this.sendPlayerPosition(player.getId(), this.id, this.handle, player);
+                  
+                //TODO I do not need to continuously calculate the position: animation is performed client side,
+                //adapter only need to know when the animation ends to send the score over
+                player.translate();
             }
             
             try {
@@ -138,44 +105,6 @@ public class World extends Thread {
         }
     }
       
-    private synchronized void sendPlayerStatus(final String id, final String worldId, final Object worldHandle, Dart player, final int updateType, final boolean isRealTime) {
-        if (updateType == ENTER) {
-            final HashMap<String,String> currentPosition = new HashMap<String,String>();
-            player.fillPositionMap(currentPosition);
-            
-            final HashMap<String,String> currentImpulses = new HashMap<String,String>();
-            player.fillImpulseMap(currentImpulses);
-            
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    listener.onPlayerCreated(id,worldId,worldHandle,currentPosition,currentImpulses,isRealTime);
-                } 
-            });
-        } else if (updateType == EXIT) {
-           executor.execute(new Runnable() {
-               @Override
-               public void run() {
-                   listener.onPlayerDisposed(id,worldId,worldHandle);
-               } 
-           });
-        }
-    }
-    
-    private synchronized void sendPlayerPosition(final String id, final String worldId, final Object worldHandle, Dart player) {
-        final HashMap<String, String> currentPosition = new HashMap<String, String>();
-        player.fillPositionMap(currentPosition);
-        
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                listener.onPlayerMoved(id, worldId, worldHandle, currentPosition);
-            } 
-        });
-    }
-    
-    
-    
     public synchronized void sendPlayerScore(final String playerId, final int score) {
         if (!this.darts.containsKey(playerId)) {
             return;

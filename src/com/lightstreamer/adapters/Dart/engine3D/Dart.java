@@ -32,7 +32,7 @@ public class Dart implements IBody {
     
     private double  x, y, z;                                // position         Vector3
     private double  vX, vY, vZ;                             // velocity         Vector3
-    
+    private double  startX, startY, startZ;
     
     private static final int READY = 1;
     private static final int FLYING = 2;
@@ -41,6 +41,8 @@ public class Dart implements IBody {
     
     private World world;
     private User owner;
+
+    private long timestamp;
 
     public Dart(User owner, String id,World world) {
         this(owner,id,world,0,0,Constants.MAX_SIZE_Z);
@@ -71,13 +73,13 @@ public class Dart implements IBody {
         this.vY = vY;
         this.vZ = vZ;
         
-        Map<String,String> update = new HashMap<String,String>();
-        this.fillPositionMap(update);
-        this.fillImpulseMap(update);
-        this.owner.setExtraProps(update);
+        this.startX = 0;
+        this.startY = 0;
+        this.startZ = 0;
         
+        this.timestamp = 0;
         
-     
+        this.updateOwner(true, true);
         
     }
     
@@ -160,57 +162,105 @@ public class Dart implements IBody {
         }
     }
     
-    public static double stopAtMax(double v, double max) {
-        if (v >= max) {
-            return max;
-        } else if (v <= -max) {
-            return -max;
-        }
-        return v; 
+    @Override
+    public void translate(double factor) {
+        //factor not handled
+        translate();
     }
     
     @Override
     public void translate() {
-        translate(1);
-    }
-    
-    @Override
-    public void translate(double factor) {
         if (this.status != FLYING) {
             //in hand
             return;
         }
         
-        //this.setImpulse(IBody.Axis.Y, this.vY-10);
-        //this.vY-=100;
+        long tNow = new Date().getTime() - this.timestamp;
+
+        double x = this.calculateAxisPos(this.startX,this.vX,tNow);
+        double y = this.calculateAxisPos(this.startY,this.vY,tNow);
+        double z = this.calculateAxisPos(this.startZ,this.vZ,tNow);
         
-       if ( this.vZ != 0) {
-           double g = 500 * Constants.TRANSLATE_DELTA * factor;
-           this.vY -= g;
-        }
+        double endXt = this.getFinalTimeIfOverflow(x, Constants.MAX_SIZE_X, this.startX, this.vX);
+        double endYt = this.getFinalTimeIfOverflow(y, Constants.MAX_SIZE_Y, this.startY, this.vY);
+        double endZt = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z, this.startZ, this.vZ);
         
-        this.z += (double)(this.vZ * Constants.TRANSLATE_DELTA * factor);
-        this.z = stopAtMax(this.z,Constants.MAX_SIZE_Z);
-        if (this.z != -Constants.MAX_SIZE_Z) {
-            
-            this.y += (double)(this.vY * Constants.TRANSLATE_DELTA * factor); 
-            this.y = stopAtMax(this.y,Constants.MAX_SIZE_Y);
-            
-            if (this.y != -Constants.MAX_SIZE_Y) {
-                this.x += (double)(this.vX * Constants.TRANSLATE_DELTA * factor); 
-                this.x = stopAtMax(this.x,Constants.MAX_SIZE_X);
-               
-            } else {
-                this.stopDart(0);
-                
+        int score = -1;
+        if (endXt != -1 || endYt != -1 || endZt != -1) {
+            boolean scored = false;
+            double tEnd = endXt;
+            tEnd = tEnd == -1 || endYt != -1 && endYt < tEnd ? endYt : tEnd;
+            if (tEnd == -1 || endZt != -1 && endZt < tEnd) {
+                tEnd = endZt;
+                scored = true;
             }
-        } else {
-            int score = DartBoard.getScore(this.x, this.y);
+            tEnd = tEnd == -1 || endZt != -1 && endZt < tEnd ? endZt : tEnd;
+            
+            x = this.calculateAxisPos(this.startX,this.vX,tEnd);
+            y = this.calculateAxisPos(this.startY,this.vY,tEnd);
+            z = this.calculateAxisPos(this.startZ,this.vZ,tEnd);
+            
+            if (scored) {
+                score = DartBoard.getScore(x, y);
+            } else {
+                score = 0;
+            }
+            
+            /*System.out.println("Start "+this.startX+"|"+this.startY+"|"+this.startZ);
+            System.out.println("Speed "+this.vX+"|"+this.vY+"|"+this.vZ);
+            System.out.println(tEnd);
+            System.out.println("End "+x+"|"+y+"|"+z);
+            System.out.println("Score "+ score);*/
+        }
+       
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        
+        if (score > -1) {
             this.stopDart(score);
         }
-        
+    }
+
+    private double calculateAxisPos(double start, double speed, double time) {
+        return start + speed*time; //TODO gravity
     }
     
+    private double calculateZPosition(double start, double speed, double time) {
+        //s = v*t + (1/2)at^2
+        double units = Constants.HALF_ACCELERATION*Math.pow(time,2);
+        
+        return this.calculateAxisPos(this.startZ,this.vZ,time) + units;
+    }
+
+    private double getFinalTimeIfOverflow(double val, double max, double start, double speed) {
+        //TODO gravity
+        if (val > max ) {
+            return calculateTimestamp(max,start,speed);//Math.abs((max-start)/speed);
+        } else if(val < -max) {
+            return calculateTimestamp(-max,start,speed); //return  Math.abs((-max-start)/speed);
+        } else {
+            return -1;
+        }
+    }
+    
+    private double calculateTimestamp(double value, double start, double speed) {
+        return Math.abs((value-start)/speed);
+    }
+    
+    private double calculateTimestampZ(double value) {
+        double c = -(value-this.startZ);
+        double a = Constants.HALF_ACCELERATION;
+        double b = this.vZ;
+        if (c<0) {
+          return (-b + Math.sqrt(Math.pow(b,2)-4*a*c))/(2*a);
+        } else if (c>0) {
+          return (-b - Math.sqrt(Math.pow(b,2)-4*a*c))/(2*a);
+        }
+        return 0;
+        
+    }
+
     public void stopDart(int score) {
         this.vX = 0;
         this.vY = 0;
@@ -218,11 +268,12 @@ public class Dart implements IBody {
         
         this.changeStatus(READY);
         
-        Map<String,String> update = new HashMap<String,String>();
-        this.fillImpulseMap(update);
-        this.owner.setExtraProps(update);
+        
+        this.updateOwner(true, true);
 
         this.world.sendPlayerScore(this.id,score);
+        
+        
     }
     
     @Override
@@ -233,21 +284,21 @@ public class Dart implements IBody {
     
     //user inputs -->
     
-    public void setImpulse(Axis axis, double intensity) {
+    private void setImpulse(Axis axis, double speed) {
         switch ( axis )
         {
             case X:
-                this.vX += intensity;
+                this.vX = speed;
                 
                 break;
                 
             case Y:
-                this.vY += intensity;
+                this.vY = speed;
                 
                 break;
                 
             case Z:
-                this.vZ += intensity;
+                this.vZ = speed;
                 
                 break;
                 
@@ -270,25 +321,35 @@ public class Dart implements IBody {
         return s.substring(0, s.indexOf("="));
     }
     
-    public void fillPositionMap(Map<String,String> model) {
+    private void fillPositionMap(Map<String,String> model) {
         try {
             model.put("posX", toBase64(this.x));
             model.put("posY", toBase64(this.y));
             model.put("posZ", toBase64(this.z));
-            model.put("timestamp", String.valueOf(new Date().getTime()));
             
         } catch (IOException e) {
             //TODO ?
         }
     }
     
-    public void fillImpulseMap(Map<String,String> model) {
+    private void fillImpulseMap(Map<String,String> model) {
         model.put("dVx", String.valueOf(this.vX));
         model.put("dVy", String.valueOf(this.vY));
         model.put("dVz", String.valueOf(this.vZ));
-        
-        model.put("locked", String.valueOf(this.status == FLYING));
     }
+    
+    public void updateOwner(boolean pos, boolean speed) {
+        Map<String,String> update = new HashMap<String,String>();
+        if (pos) {
+            this.fillPositionMap(update);
+        }
+        if(speed) {
+            this.fillImpulseMap(update);
+        }
+        this.owner.setExtraProps(update);
+    }
+    
+    // actions -->
     
     private void changeStatus(int newStatus) {
         if (this.status == newStatus) {
@@ -303,22 +364,27 @@ public class Dart implements IBody {
             throw new CreditsException(-10, "Can't throw if not grabbed");
         }
         
-        if (z >= 0) {
+        if (x == 0 && y == 0 && z == 0) {
             //fail throw
             this.changeStatus(READY);
             return;
         }
         this.changeStatus(FLYING);
-     
+        
+        this.timestamp = new Date().getTime();
+        
         this.setImpulse(IBody.Axis.X, x);
         this.setImpulse(IBody.Axis.Y, y);
         this.setImpulse(IBody.Axis.Z, z);
         
-        Map<String,String> update = new HashMap<String,String>();
-        this.fillImpulseMap(update);
-        this.owner.setExtraProps(update);
+        this.updateOwner(true, true);
         
+        this.startX = this.x;
+        this.startY = this.y;
+        this.startZ = this.z;
+    
     }
+    
     
     public void block() throws CreditsException {
         if (this.status != READY) {
@@ -331,9 +397,9 @@ public class Dart implements IBody {
         this.vY = 0;
         this.vZ = 0;
         
-        Map<String,String> update = new HashMap<String,String>();
-        this.fillImpulseMap(update);
-        this.owner.setExtraProps(update);
+        this.timestamp = 0;
+        
+        this.updateOwner(false, true);
         
     }
     
@@ -351,13 +417,8 @@ public class Dart implements IBody {
         this.y = y;
         this.z = z;
         
-        Map<String,String> update = new HashMap<String,String>();
-        this.fillPositionMap(update);
-        this.owner.setExtraProps(update);
-        
+        this.updateOwner(true, false);
     }
-    
-    
     
     
     //rotation is not handled -->

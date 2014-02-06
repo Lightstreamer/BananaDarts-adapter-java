@@ -96,8 +96,6 @@ public class DartDataAdapter implements SmartDataProvider, UniverseListener, Cha
 
         if (item.indexOf(Constants.USER_SUBSCRIPTION) == 0) { 
             return false; //currently does not generate any event at all (and never will)
-        } else if (item.indexOf(Constants.ROOMPOSITION_SUBSCRIPTION) == 0) {
-            return true;
         } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0) {
             return true;
         } else if (item.indexOf(Constants.ROOMSCORE_SUBSCRIPTION) == 0) {
@@ -119,14 +117,6 @@ public class DartDataAdapter implements SmartDataProvider, UniverseListener, Cha
             
             //user is created on subscription and destroyed on unsubscription
             chat.startUserMessageListen(val,handle);
-            
-        } else if (item.indexOf(Constants.ROOMPOSITION_SUBSCRIPTION) == 0) {
-            //COMMAND contains list of users and object positions
-            logger.debug("Position subscription: " + item);
-            
-            String roomId = item.substring(Constants.ROOMPOSITION_SUBSCRIPTION.length());
-            
-            universe.startWatchingWorld(roomId, handle);
             
         } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0) {
             //COMMAND contains users of a certain room
@@ -159,13 +149,6 @@ public class DartDataAdapter implements SmartDataProvider, UniverseListener, Cha
             logger.debug("User unsubscription: " + item);
             
             chat.stopUserMessageListen(val);
-            
-        } else if (item.indexOf(Constants.ROOMPOSITION_SUBSCRIPTION) == 0) {
-            logger.debug("Position unsubscription: " + item);
-            
-            String roomId = item.substring(Constants.ROOMPOSITION_SUBSCRIPTION.length());
-            
-            universe.stopWatchingWorld(roomId);
             
         } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0) {
             logger.debug("Room list unsubscription: " + item);
@@ -266,50 +249,6 @@ public class DartDataAdapter implements SmartDataProvider, UniverseListener, Cha
     public void onUserDeleted(String id) {
         //do nothing
         logger.debug(id + " is gone");
-    }
-    
-    // universe events are generated even if there is no handle
-    
-    @Override
-    public void onWorldComplete(String worldId, Object worldHandle) {
-        if (worldHandle != null) {
-            this.listener.smartEndOfSnapshot(worldHandle);
-        }
-    }
-
-    @Override
-    public void onPlayerCreated(String id, String worldId, Object worldHandle, HashMap<String,String> currentPosition,  HashMap<String,String> currentImpulses, boolean realTimeEvent) {
-        logger.debug(id + " enters world " + worldId);
-        
-        if (worldHandle != null) {
-            currentPosition.put(SmartDataProvider.KEY_FIELD, id);
-            currentPosition.put(SmartDataProvider.COMMAND_FIELD, SmartDataProvider.ADD_COMMAND); 
-            this.listener.smartUpdate(worldHandle, currentPosition, !realTimeEvent);
-        }
-    }
-    
-    @Override
-    public void onPlayerMoved(String id, String worldId, Object worldHandle,
-            HashMap<String, String> currentPosition) {
-        
-        if (worldHandle != null) {
-            currentPosition.put(SmartDataProvider.KEY_FIELD, id);
-            currentPosition.put(SmartDataProvider.COMMAND_FIELD, SmartDataProvider.UPDATE_COMMAND);
-            this.listener.smartUpdate(worldHandle, currentPosition, false);
-        }
-    
-    }
-
-    @Override
-    public void onPlayerDisposed(String id, String worldId, Object worldHandle) {
-        logger.debug(id + " exits world " + worldId);
-        if (worldHandle != null) {
-            HashMap<String, String> update = new HashMap<String, String>();
-            update.put(SmartDataProvider.KEY_FIELD, id);
-            update.put(SmartDataProvider.COMMAND_FIELD, SmartDataProvider.DELETE_COMMAND);
-            
-            this.listener.smartUpdate(worldHandle, update, false);
-        }
     }
     
     @Override

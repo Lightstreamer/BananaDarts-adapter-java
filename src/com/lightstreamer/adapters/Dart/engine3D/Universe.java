@@ -63,24 +63,7 @@ public class Universe {
         World world = this.getWorldForced(room);
         world.addUser(user);
     }
-    
-    public synchronized void startWatchingWorld(String id, Object handle) {
-        World world = this.getWorldForced(id);
-        
-        world.setHandle(handle);
-    }
-    
-    public synchronized void stopWatchingWorld(String id) {
-        if (!worlds.containsKey(id)) {
-            return;
-        }
-        World world = worlds.get(id);
-        world.setHandle(null);
-        
-        this.verifyWorld(id,world);
-
-    }
-    
+       
     public void stopWatchingWorldScore(String id) {
         if (!worlds.containsKey(id)) {
             return;

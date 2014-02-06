@@ -18,7 +18,6 @@ package com.lightstreamer.adapters.Dart;
 public class Constants {
 
     public static final String USER_SUBSCRIPTION = "user_";
-    public static final String ROOMPOSITION_SUBSCRIPTION = "roompos_";
     public static final String ROOMCHATLIST_SUBSCRIPTION = "roomchatlist_";
     public static final String ROOMSCORE_SUBSCRIPTION = "roomscore_";
     

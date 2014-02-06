@@ -48,9 +48,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
     private ConcurrentHashMap<String,String> ids = new ConcurrentHashMap<String,String>();
     
     private DartDataAdapter feed;
-    
-    private int nextId = 0;
-    
+        
     private static final String LOGGER_CAT = "LS_demos_Logger.LeapDemo";
     public static Logger logger;
 
@@ -121,10 +119,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
         if (item.indexOf(Constants.USER_SUBSCRIPTION) == 0 && mode == Mode.DISTINCT) { 
             return true;
             
-        } else if (item.indexOf(Constants.ROOMPOSITION_SUBSCRIPTION) == 0 && mode == Mode.COMMAND) {
-            return true;
-            
-        } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0  && mode == Mode.COMMAND) {
+       } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0  && mode == Mode.COMMAND) {
             return true;
             
         } else if (item.indexOf(Constants.ROOMSCORE_SUBSCRIPTION) == 0  && mode == Mode.DISTINCT) {
