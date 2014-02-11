@@ -32,8 +32,10 @@ public class Constants {
 
     public static final int FRAME_INTERVAL = 50;
     
-    private static final double GRAVITY = 9.82;
-    private static final double ACCELERATION_UNIT_MS_SQUARE = cmToUnit(GRAVITY/10000)*Constants.SCALE; //(9.81/1000000)*100 cm/ms^2;
+    private static final double  MOON_GRAVITY =  1.6249; 
+    private static final double EARTH_GRAVITY = 9.82;
+    
+    private static final double ACCELERATION_UNIT_MS_SQUARE = cmToUnit(MOON_GRAVITY/10000)*Constants.SCALE; //(9.81/1000000)*100 cm/ms^2;
     public static final double HALF_ACCELERATION = ACCELERATION_UNIT_MS_SQUARE/2;
     
     
