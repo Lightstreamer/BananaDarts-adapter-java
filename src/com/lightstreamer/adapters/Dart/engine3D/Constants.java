@@ -13,6 +13,7 @@ public class Constants {
     
     //Dart length (can't find info, but it seems a little longer than the triple-score circle that's 94) --> 96*scale
     
+    //http://piccole.rispostesenzadomanda.com/post/76949354071
     
   //why didn't we use only positive positions?
     
@@ -23,10 +24,10 @@ public class Constants {
     public static final double SCALE = 0.20;
     
     public static final double MAX_SIZE_X = cmToUnit(300/2)*SCALE; 
-    public static final double MAX_SIZE_Y = cmToUnit(150/2)*SCALE;
+    public static final double MAX_SIZE_Y = cmToUnit(200/2)*SCALE;
     public static final double MAX_SIZE_Z = cmToUnit(236.855/2)*SCALE; //represents half the length of the room
     
-    public static final double CENTER_Y = cmToUnit(172.2)*Constants.SCALE - MAX_SIZE_X; //NB floor is @ MAX_SIZE_X units from the bottom of the room
+    public static final double CENTER_Y = cmToUnit(172.2)*Constants.SCALE - MAX_SIZE_Y; //NB floor is @ MAX_SIZE_Y units from the bottom of the room
     
     public static final double ARM_REACH = MAX_SIZE_Z - cmToUnit(32)*SCALE;
 
