@@ -234,13 +234,16 @@ public class Dart implements IBody {
     }
 
     private double getFinalTimeIfOverflow(double val, double max, double start, double speed, boolean gravity) {
+        
+        
         if (val > max || val < -max) {
+            
+            max = val > max ? max : -max;
+            
             if (gravity) {
-                return this.calculateTimestampY(val);
-            } else if (val > max ) {
-                return calculateTimestamp(max,start,speed);//Math.abs((max-start)/speed);
-            } else if(val < -max) {
-                return calculateTimestamp(-max,start,speed); //return  Math.abs((-max-start)/speed);
+                return this.calculateTimestampY(max);
+            } else {
+                return calculateTimestamp(max,start,speed); //return  Math.abs((max-start)/speed);
             }
         }    
         return -1;
@@ -252,7 +255,7 @@ public class Dart implements IBody {
     
     private double calculateTimestampY(double value) {
         double c = -(value-this.startY);
-        double a = Constants.HALF_ACCELERATION;
+        double a = -Constants.HALF_ACCELERATION;
         double b = this.vY;
         if (c<0) {
           return (-b + Math.sqrt(Math.pow(b,2)-4*a*c))/(2*a);
