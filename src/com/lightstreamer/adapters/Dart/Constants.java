@@ -35,7 +35,6 @@ public class Constants {
     public static final String ENTER_ROOM = "enter|";
     public static final String EXIT_ROOM = "leave|";
     
-    public static final String GRAB_MESSAGE = "grab|";
     public static final String RELEASE_MESSAGE = "release|";
     public static final String MOVE_MESSAGE = "move|";
     

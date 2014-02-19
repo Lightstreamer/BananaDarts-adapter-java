@@ -33,12 +33,7 @@ public class Dart implements IBody {
     private double  x, y, z;                                // position         Vector3
     private double  vX, vY, vZ;                             // velocity         Vector3
     private double  startX, startY, startZ;
-    
-    private static final int READY = 1;
-    private static final int FLYING = 2;
-    private static final int GRABBED = 3;
-    private int status = READY;
-    
+       
     private World world;
     private User owner;
 
@@ -170,7 +165,7 @@ public class Dart implements IBody {
     
     @Override
     public void translate() {
-        if (this.status != FLYING) {
+        if (!this.isFlying()) {
             //in hand
             return;
         }
@@ -271,9 +266,6 @@ public class Dart implements IBody {
         this.vY = 0;
         this.vZ = 0;
         
-        this.changeStatus(READY);
-        
-        
         this.updateOwner(true, true);
 
         this.world.sendPlayerScore(this.id,score);
@@ -356,25 +348,19 @@ public class Dart implements IBody {
     
     // actions -->
     
-    private void changeStatus(int newStatus) {
-        if (this.status == newStatus) {
-            return;
-        }
-        
-        this.status = newStatus;
+    private boolean isFlying() {
+        return this.vZ < 0;
     }
-
+    
     public void throwDart(double x, double y, double z) throws CreditsException {
-        if (this.status != GRABBED) {
-            throw new CreditsException(-10, "Can't throw if not grabbed");
+        if (this.isFlying()) {
+            throw new CreditsException(-10, "Can't throw if flying");
         }
         
-        if (x == 0 && y == 0 && z == 0) {
+        if (z >= 0) {
             //fail throw
-            this.changeStatus(READY);
             return;
         }
-        this.changeStatus(FLYING);
         
         this.timestamp = new Date().getTime();
         
@@ -389,28 +375,10 @@ public class Dart implements IBody {
         this.startZ = this.z;
     
     }
-    
-    
-    public void block() throws CreditsException {
-        if (this.status != READY) {
-            //can't grab while flying or already flying
-            throw new CreditsException(-11, "Can't grab while flying");
-        }
-        this.changeStatus(GRABBED);
         
-        this.vX = 0;
-        this.vY = 0;
-        this.vZ = 0;
-        
-        this.timestamp = 0;
-        
-        this.updateOwner(false, true);
-        
-    }
-    
     public void forcePosition(double x, double y, double z) throws CreditsException {
-        if (this.status != GRABBED) {
-            throw new CreditsException(-12, "Can't move around while not grabbed");
+        if (this.isFlying()) {
+            throw new CreditsException(-12, "Can't move around while flying");
         }
         
         if (z < Constants.ARM_REACH) {

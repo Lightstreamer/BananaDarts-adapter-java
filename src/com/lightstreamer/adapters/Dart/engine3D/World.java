@@ -119,14 +119,6 @@ public class World extends Thread {
             } 
         });
     }
-
-    public synchronized void block(String playerId) throws CreditsException {
-        if (!this.darts.containsKey(playerId)) {
-            return;
-        }
-        Dart player = this.darts.get(playerId);
-        player.block();
-    }
     
     public synchronized void release(String playerId, double x, double y, double z) throws CreditsException {
         if (!this.darts.containsKey(playerId)) {

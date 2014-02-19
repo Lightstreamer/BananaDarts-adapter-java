@@ -89,14 +89,6 @@ public class Universe {
         }
     }
 
-    public void block(String playerId, String worldId) throws CreditsException {
-        if (!worlds.containsKey(worldId)) {
-            return;
-        }
-        World world = worlds.get(worldId);
-        world.block(playerId);
-    }
-
     public void release(String playerId, String worldId, double x, double y, double z) throws CreditsException {
         if (!worlds.containsKey(worldId)) {
             return;
