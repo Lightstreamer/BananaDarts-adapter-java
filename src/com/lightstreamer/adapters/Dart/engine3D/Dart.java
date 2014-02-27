@@ -377,7 +377,8 @@ public class Dart implements IBody {
         
     public void forcePosition(double x, double y, double z) throws CreditsException {
         if (this.isFlying()) {
-            throw new CreditsException(-12, "Can't move around while flying");
+            //throw new CreditsException(-12, "Can't move around while flying");
+            return;
         }
         
         if (z < Constants.ARM_REACH) {
