@@ -180,32 +180,30 @@ public class Dart implements IBody {
         double endYt = this.getFinalTimeIfOverflow(y, Constants.MAX_SIZE_Y, this.startY, this.vY,true);
         double endZt = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z, this.startZ, this.vZ,false);
         
+        double endZtBoard = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z-Constants.BOARD_THICKNESS, this.startZ, this.vZ,false);
+        
         int score = -1;
-        if (endXt != -1 || endYt != -1 || endZt != -1) {
-            boolean scored = false;
+        if (endZtBoard != -1) {
+            x = this.calculateAxisPos(this.startX,this.vX,endZtBoard);
+            y = this.calculateYPosition(this.startY,this.vY,endZtBoard);
+            z = this.calculateAxisPos(this.startZ,this.vZ,endZtBoard);
+            
+            if(DartBoard.isInBoard(x, y)) {
+                score = DartBoard.getScore(x, y);
+            }
+            
+        } 
+        
+        if (score == -1 && (endXt != -1 || endYt != -1 || endZt != -1)) {
             double tEnd = endXt;
             tEnd = tEnd == -1 || endYt != -1 && endYt < tEnd ? endYt : tEnd;
-            if (tEnd == -1 || endZt != -1 && endZt < tEnd) {
-                tEnd = endZt;
-                scored = true;
-            }
             tEnd = tEnd == -1 || endZt != -1 && endZt < tEnd ? endZt : tEnd;
             
             x = this.calculateAxisPos(this.startX,this.vX,tEnd);
             y = this.calculateYPosition(this.startY,this.vY,tEnd);
             z = this.calculateAxisPos(this.startZ,this.vZ,tEnd);
-            
-            if (scored) {
-                score = DartBoard.getScore(x, y);
-            } else {
-                score = 0;
-            }
-            
-            /*System.out.println("Start "+this.startX+"|"+this.startY+"|"+this.startZ);
-            System.out.println("Speed "+this.vX+"|"+this.vY+"|"+this.vZ);
-            System.out.println(tEnd);
-            System.out.println("End "+x+"|"+y+"|"+z);
-            System.out.println("Score "+ score);*/
+           
+            score = 0;
         }
        
         this.x = x;

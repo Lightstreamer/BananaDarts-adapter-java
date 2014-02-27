@@ -38,6 +38,8 @@ public class Constants {
     
     private static final double ACCELERATION_UNIT_MS_SQUARE = cmToUnit(MOON_GRAVITY/10000)*Constants.SCALE; //(9.81/1000000)*100 cm/ms^2;
     public static final double HALF_ACCELERATION = ACCELERATION_UNIT_MS_SQUARE/2;
+
+    public static final double BOARD_THICKNESS = 10*SCALE;
     
     
 }

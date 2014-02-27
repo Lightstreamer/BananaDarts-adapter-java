@@ -36,7 +36,7 @@ public class DartBoard {
    
     
     
-    
+    private static final Circle mainCircle = new Circle(0,Constants.CENTER_Y,200*Constants.SCALE/2);
     
     private static Circle[] circles = {
       new Circle(0,Constants.CENTER_Y,6*Constants.SCALE/2),
@@ -109,6 +109,11 @@ public class DartBoard {
         }
         
         return 0;
+    }
+
+
+    public static boolean isInBoard(double x, double y) {
+        return mainCircle.contains(x,y);
     }
     
     
