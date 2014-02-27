@@ -178,8 +178,7 @@ public class Dart implements IBody {
         
         double endXt = this.getFinalTimeIfOverflow(x, Constants.MAX_SIZE_X, this.startX, this.vX,false);
         double endYt = this.getFinalTimeIfOverflow(y, Constants.MAX_SIZE_Y, this.startY, this.vY,true);
-        double endZt = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z, this.startZ, this.vZ,false);
-        
+        double endZt = -1;
         double endZtBoard = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z-Constants.BOARD_THICKNESS, this.startZ, this.vZ,false);
         
         int score = -1;
@@ -190,6 +189,8 @@ public class Dart implements IBody {
             
             if(DartBoard.isInBoard(x, y)) {
                 score = DartBoard.getScore(x, y);
+            } else {
+                endZt = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z, this.startZ, this.vZ,false);
             }
             
         } 
