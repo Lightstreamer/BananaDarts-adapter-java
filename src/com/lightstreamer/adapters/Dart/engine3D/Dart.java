@@ -183,11 +183,13 @@ public class Dart implements IBody {
         
         int score = -1;
         if (endZtBoard != -1) {
-            x = this.calculateAxisPos(this.startX,this.vX,endZtBoard);
-            y = this.calculateYPosition(this.startY,this.vY,endZtBoard);
-            z = this.calculateAxisPos(this.startZ,this.vZ,endZtBoard);
+            double tmpX = this.calculateAxisPos(this.startX,this.vX,endZtBoard);
+            double tmpY = this.calculateYPosition(this.startY,this.vY,endZtBoard);
             
             if(DartBoard.isInBoard(x, y)) {
+                z = this.calculateAxisPos(this.startZ,this.vZ,endZtBoard);
+                x = tmpX;
+                y = tmpY;
                 score = DartBoard.getScore(x, y);
             } else {
                 endZt = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z, this.startZ, this.vZ,false);
@@ -203,7 +205,7 @@ public class Dart implements IBody {
             x = this.calculateAxisPos(this.startX,this.vX,tEnd);
             y = this.calculateYPosition(this.startY,this.vY,tEnd);
             z = this.calculateAxisPos(this.startZ,this.vZ,tEnd);
-           
+            
             score = 0;
         }
        
