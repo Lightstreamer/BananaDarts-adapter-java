@@ -115,12 +115,11 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
             //user is created on subscription and destroyed on unsubscription
             chat.startUserMessageListen(val,handle);
             
-        } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0) {
+        } else if (( val = Constants.getVal(item,Constants.ROOMCHATLIST_SUBSCRIPTION)) != null) {
             //COMMAND contains users of a certain room
-            logger.debug("Room list subscription: " + item);
+            logger.debug("Room list subscription: " + val);
             
-            String roomId = item.substring(Constants.ROOMCHATLIST_SUBSCRIPTION.length());
-            chat.startRoomListen(roomId,handle);// will add the room if non-existent (room may exist if a user entered it even if no one is listening to it)
+            chat.startRoomListen(val,handle);// will add the room if non-existent (room may exist if a user entered it even if no one is listening to it)
         
         } else {
             //MERGE subscription for user status and nick + their commands and forced positions 
@@ -139,18 +138,14 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
         String val;
         if (( val = Constants.getVal(item,Constants.USER_SUBSCRIPTION)) != null) {
             logger.debug("User unsubscription: " + item);
-            
             chat.stopUserMessageListen(val);
             
-        } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0) {
-            logger.debug("Room list unsubscription: " + item);
+        } else if (( val = Constants.getVal(item,Constants.ROOMCHATLIST_SUBSCRIPTION)) != null) {
+            logger.debug("Room list unsubscription: " + val);
+            chat.stopRoomListen(val);
             
-            String roomId = item.substring(Constants.ROOMCHATLIST_SUBSCRIPTION.length());
-            chat.stopRoomListen(roomId);
-        
         } else {
             logger.debug("User status unsubscription: " + item);
-            
             chat.stopUserStatusListen(item);
         }
     }
