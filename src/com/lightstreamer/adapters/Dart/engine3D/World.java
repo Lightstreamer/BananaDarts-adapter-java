@@ -17,20 +17,13 @@ package com.lightstreamer.adapters.Dart.engine3D;
 
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class World extends Thread {
     
- 
-    private Executor executor =  Executors.newSingleThreadExecutor();
-
     private String id=null;
-    
-    private UniverseListener listener;
     
     private ConcurrentHashMap<String,Dart> darts = new ConcurrentHashMap<String,Dart>();
     private Object scoreHandle = null;
@@ -41,9 +34,8 @@ public class World extends Thread {
     private boolean stop = false;
     
     
-    World(String id, UniverseListener listener, int frameInterval)  {
+    World(String id, int frameInterval)  {
         this.id = id;
-        this.listener = listener;
         
         this.frameInterval = frameInterval;
     }
@@ -106,21 +98,6 @@ public class World extends Thread {
         }
     }
       
-    public synchronized void sendPlayerScore(final String playerId, final int score) {
-        if (!this.darts.containsKey(playerId)) {
-            return;
-        }
-        
-        final String worldId = this.id;
-        final Object worldHandle = this.scoreHandle;
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                listener.onPlayerScore(playerId, score, worldId, worldHandle);
-            } 
-        });
-    }
-    
     public synchronized void release(String playerId, double x, double y, double z) throws CreditsException {
         if (!this.darts.containsKey(playerId)) {
             return;

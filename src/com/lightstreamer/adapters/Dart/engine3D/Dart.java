@@ -39,6 +39,10 @@ public class Dart implements IBody {
 
     private long timestamp;
 
+    private int totalScore;
+    private int lastScore;
+    private int numThrows;
+
     public Dart(User owner, String id,World world) {
         this(owner,id,world,0,0,Constants.MAX_SIZE_Z);
     }
@@ -74,7 +78,11 @@ public class Dart implements IBody {
         
         this.timestamp = 0;
         
-        this.updateOwner(true, true);
+        this.totalScore = 0;
+        this.numThrows = 0;
+        this.lastScore = 0;
+        
+        this.updateOwner(true, true, true);
         
     }
     
@@ -267,10 +275,12 @@ public class Dart implements IBody {
         this.vY = 0;
         this.vZ = 0;
         
-        this.updateOwner(true, true);
-
-        this.world.sendPlayerScore(this.id,score);
+        this.numThrows++;
+        this.totalScore += score;
+        this.lastScore = score;
         
+        
+        this.updateOwner(true, true, true);
         
     }
     
@@ -336,13 +346,23 @@ public class Dart implements IBody {
         model.put("dVz", String.valueOf(this.vZ));
     }
     
-    public void updateOwner(boolean pos, boolean speed) {
+    private void fillScoreMap(Map<String,String> model) {
+        model.put("lastScore", String.valueOf(this.lastScore));
+        model.put("numThrows", String.valueOf(this.numThrows));
+        model.put("totalScore", String.valueOf(this.totalScore));
+    }
+    
+    
+    public void updateOwner(boolean pos, boolean speed, boolean score) {
         Map<String,String> update = new HashMap<String,String>();
         if (pos) {
             this.fillPositionMap(update);
         }
         if(speed) {
             this.fillImpulseMap(update);
+        }
+        if (score) {
+            this.fillScoreMap(update);
         }
         this.owner.setExtraProps(update);
     }
@@ -369,7 +389,7 @@ public class Dart implements IBody {
         this.setImpulse(IBody.Axis.Y, y);
         this.setImpulse(IBody.Axis.Z, z);
         
-        this.updateOwner(true, true);
+        this.updateOwner(true, true, false);
         
         this.startX = this.x;
         this.startY = this.y;
@@ -392,7 +412,7 @@ public class Dart implements IBody {
         this.y = y;
         this.z = z;
         
-        this.updateOwner(true, false);
+        this.updateOwner(true, false, false);
     }
     
     

@@ -28,12 +28,8 @@ public class Universe {
     public static Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.LOGGER_CAT);
     
     private Map<String,World> worlds = new HashMap<String,World>();
-
     
-    private UniverseListener listener;
-    
-    public Universe(UniverseListener listener) {
-        this.listener = listener;
+    public Universe() {
     }
 
     private synchronized World getWorldForced(String id) {
@@ -41,7 +37,7 @@ public class Universe {
             return worlds.get(id);
             
         } else {
-            World world = new World(id,listener, Constants.FRAME_INTERVAL);
+            World world = new World(id,Constants.FRAME_INTERVAL);
             worlds.put(id, world);
             world.start();
             return world;

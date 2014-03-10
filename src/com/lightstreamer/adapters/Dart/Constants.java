@@ -19,7 +19,6 @@ public class Constants {
 
     public static final String USER_SUBSCRIPTION = "user_";
     public static final String ROOMCHATLIST_SUBSCRIPTION = "roomchatlist_";
-    public static final String ROOMSCORE_SUBSCRIPTION = "roomscore_";
     
     public static final String SPLIT_CHAR_REG = "\\|";
     public static final String SPLIT_CHAR = "|";
