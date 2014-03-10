@@ -56,7 +56,7 @@ public class Universe {
         World world = worlds.get(room);
         world.removeUser(id); 
         
-        this.verifyWorld(id,world);
+        this.verifyWorld(world.getWorldId(),world);
     }
 
     public synchronized void addPlayerToWorld(User user, String room) {

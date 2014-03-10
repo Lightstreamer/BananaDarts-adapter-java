@@ -28,7 +28,8 @@ public class World extends Thread {
  
     private Executor executor =  Executors.newSingleThreadExecutor();
 
-    private String id;
+    private String id=null;
+    
     private UniverseListener listener;
     
     private ConcurrentHashMap<String,Dart> darts = new ConcurrentHashMap<String,Dart>();
@@ -136,7 +137,9 @@ public class World extends Thread {
         player.forcePosition(x, y, z);
     }
     
-    
+    public String getWorldId() {
+        return id;
+    }
     
 
 }
