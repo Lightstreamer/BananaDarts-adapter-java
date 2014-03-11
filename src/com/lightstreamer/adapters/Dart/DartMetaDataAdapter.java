@@ -185,6 +185,10 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
             String[] values = val.split(Constants.SPLIT_CHAR_REG);
             double[] dobuleValues = getDoubles(values);
             universe.move(id,values[0],dobuleValues[0],dobuleValues[1],dobuleValues[2]);
+        
+        } else if (( val = Constants.getVal(message,Constants.RESET_MESSAGE)) != null) {
+            Universe universe = this.feed.getUniverse();
+            universe.resetScore(id,val);
 
         } else if (( val = Constants.getVal(message,Constants.CHAT_MESSAGE)) != null) {
             ChatRoom chat = this.feed.getChatFeed();

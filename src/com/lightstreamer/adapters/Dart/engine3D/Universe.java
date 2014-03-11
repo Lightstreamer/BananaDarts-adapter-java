@@ -100,5 +100,13 @@ public class Universe {
         World world = worlds.get(worldId);
         world.move(playerId,x,y,z);
     }
+    
+    public void resetScore(String playerId, String worldId) {
+        if (!worlds.containsKey(worldId)) {
+            return;
+        }
+        World world = worlds.get(worldId);
+        world.resetScore(playerId);
+    }
 
 }

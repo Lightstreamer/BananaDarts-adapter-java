@@ -114,6 +114,14 @@ public class World extends Thread {
         player.forcePosition(x, y, z);
     }
     
+    public synchronized void resetScore(String playerId) {
+        if (!this.darts.containsKey(playerId)) {
+            return;
+        }
+        Dart player = this.darts.get(playerId);
+        player.resetScore();
+    }
+    
     public String getWorldId() {
         return id;
     }

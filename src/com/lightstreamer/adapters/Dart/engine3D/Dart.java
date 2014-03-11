@@ -415,6 +415,13 @@ public class Dart implements IBody {
         this.updateOwner(true, false, false);
     }
     
+    public void resetScore() {
+        this.lastScore = 0;
+        this.totalScore = 0;
+        this.numThrows = 0;
+        this.updateOwner(false, false, true);
+    }
+    
     
     //rotation is not handled -->
 

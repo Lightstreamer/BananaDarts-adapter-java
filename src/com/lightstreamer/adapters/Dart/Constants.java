@@ -38,6 +38,7 @@ public class Constants {
     public static final String RELEASE_MESSAGE = "release|";
     public static final String MOVE_MESSAGE = "move|";
     public static final String CHAT_MESSAGE = "chat|";
+    public static final String RESET_MESSAGE = "reset|";
     
     public static String getVal(String original, String type) {
         if(original.indexOf(type) == 0) {
