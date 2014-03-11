@@ -97,6 +97,8 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
             return false; //currently does not generate any event at all (and never will)
         } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0) {
             return true;
+        } else if (item.indexOf(Constants.ROOMCHAT_SUBSCRIPTION) == 0) {
+            return false; 
         } else {
             return true;
         }
@@ -121,6 +123,12 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
             
             chat.startRoomListen(val,handle);// will add the room if non-existent (room may exist if a user entered it even if no one is listening to it)
         
+        } else if (( val = Constants.getVal(item,Constants.ROOMCHAT_SUBSCRIPTION)) != null) {
+            //DISTINCT chat for the room
+            logger.debug("Room chat subscription: " + val);
+            
+            chat.startRoomChatListen(val,handle);
+            
         } else {
             //MERGE subscription for user status and nick + their commands and forced positions 
             logger.debug("User status subscription: " + item);
@@ -143,6 +151,12 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
         } else if (( val = Constants.getVal(item,Constants.ROOMCHATLIST_SUBSCRIPTION)) != null) {
             logger.debug("Room list unsubscription: " + val);
             chat.stopRoomListen(val);
+            
+        } else if (( val = Constants.getVal(item,Constants.ROOMCHAT_SUBSCRIPTION)) != null) {
+            //DISTINCT chat for the room
+            logger.debug("Room chat unsubscription: " + val);
+            
+            chat.stopRoomChatListen(val);
             
         } else {
             logger.debug("User status unsubscription: " + item);

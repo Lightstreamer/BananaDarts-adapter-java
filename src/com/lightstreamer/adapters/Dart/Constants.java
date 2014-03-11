@@ -19,6 +19,7 @@ public class Constants {
 
     public static final String USER_SUBSCRIPTION = "user_";
     public static final String ROOMCHATLIST_SUBSCRIPTION = "roomchatlist_";
+    public static final String ROOMCHAT_SUBSCRIPTION = "roomchat_";
     
     public static final String SPLIT_CHAR_REG = "\\|";
     public static final String SPLIT_CHAR = "|";
@@ -36,6 +37,7 @@ public class Constants {
     
     public static final String RELEASE_MESSAGE = "release|";
     public static final String MOVE_MESSAGE = "move|";
+    public static final String CHAT_MESSAGE = "chat|";
     
     public static String getVal(String original, String type) {
         if(original.indexOf(type) == 0) {

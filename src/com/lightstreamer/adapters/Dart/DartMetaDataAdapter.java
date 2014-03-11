@@ -122,7 +122,10 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
        } else if (item.indexOf(Constants.ROOMCHATLIST_SUBSCRIPTION) == 0  && mode == Mode.COMMAND) {
             return true;
             
-        }
+       } else if (item.indexOf(Constants.ROOMCHAT_SUBSCRIPTION) == 0  && mode == Mode.DISTINCT) {
+           return true;
+           
+       }
         
         return mode == Mode.MERGE;
     }
@@ -148,12 +151,12 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
         }
         
         //nick| <-- changing nick
-        //status| <-- changing status message
+        //status| <-- changing status message (unused)
         //enter| <-- enter a room
         //leave| <-- leave a room
-        //grab| <-- grab the cube
-        //release| <-- release the cube
-        //move| <-- move the cube
+        //release| <-- throw the dart
+        //move| <-- move the dart
+        //chat| <-- message the room
         String val;
         if (( val = Constants.getVal(message,Constants.NICK_MESSAGE)) != null) {
             ChatRoom chat = this.feed.getChatFeed();
@@ -182,6 +185,11 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
             String[] values = val.split(Constants.SPLIT_CHAR_REG);
             double[] dobuleValues = getDoubles(values);
             universe.move(id,values[0],dobuleValues[0],dobuleValues[1],dobuleValues[2]);
+
+        } else if (( val = Constants.getVal(message,Constants.CHAT_MESSAGE)) != null) {
+            ChatRoom chat = this.feed.getChatFeed();
+            String[] vals = val.split(Constants.SPLIT_CHAR_REG);
+            chat.broadcastMessage(id,vals[0],vals[1]);
         }
     }
     
