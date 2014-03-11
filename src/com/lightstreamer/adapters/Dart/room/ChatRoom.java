@@ -108,6 +108,20 @@ public class ChatRoom {
         }
     }
     
+    public void broadcastMessage(String id, String roomId, String message) {
+        synchronized(users) {
+            synchronized(rooms) {
+                if (!users.containsKey(id) || !rooms.containsKey(roomId)) {
+                    return;
+                }
+                User user = users.get(id);
+                Room room = rooms.get(roomId);
+                room.broadcastMessage(user,message);
+            }
+        }
+        
+    }
+    
     private User getUserForced(String id) {
         synchronized(users) {
             User user;
@@ -258,6 +272,29 @@ public class ChatRoom {
             }
         }
     }
+    
+    public void startRoomChatListen(String roomId, Object roomChatHandle) {
+        synchronized(rooms) {
+            Room room = this.getRoomForced(roomId);
+            
+            room.setMessageHandle(roomChatHandle);
+        }
+        
+    }
+
+    public void stopRoomChatListen(String roomId) {
+        synchronized(rooms) {
+            if (!rooms.containsKey(roomId)) {
+                return;
+            }
+            Room room = rooms.get(roomId);
+            room.setMessageHandle(null);
+            if (room.isEmpty() && !room.isListened()) {
+                rooms.remove(roomId);
+            }
+        }
+        
+    }
 
     //synchronized(rooms) {
     private void sendRoomStatusEvent(final User user, final String roomId, final Object roomStatusHandle, boolean entering, final boolean realTimeEvent) {
@@ -289,6 +326,12 @@ public class ChatRoom {
             this.roomId = roomId;
         }
        
+        public void broadcastMessage(User user, String message) {
+            if (this.messageHandle != null) {
+              //TODO send event to listener
+            }
+        }
+
         public boolean isEmpty() {
             return users.isEmpty();
         }
