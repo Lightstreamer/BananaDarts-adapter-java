@@ -225,9 +225,15 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
     }
 
     @Override
-    public void onUserMessage(String id, String message, String room, Object roomHandle, boolean realTimeEvent) {
-      //not used - not implemented
-        logger.debug(id + " sent a message to " + room);
+    public void onUserMessage(String user, String message, String room, Object roomHandle, boolean realTimeEvent) {
+        logger.debug(user + " sent a message to " + room);
+        
+        Map<String,String> update = new HashMap<String,String>();
+        update.put("nick", user);
+        update.put("message", message);
+        
+        
+        this.listener.smartUpdate(roomHandle, update, !realTimeEvent);
     }
 
     @Override

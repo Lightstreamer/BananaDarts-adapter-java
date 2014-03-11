@@ -313,6 +313,16 @@ public class ChatRoom {
         }
     }
     
+    
+    private void sendRoomMessageEvent(final User user, final String room, final Object messageHandle, final String message) {
+        final String nick = user.getNick();
+        executor.execute(new Runnable() {
+            public void run() {
+                listener.onUserMessage(nick,message,room,messageHandle,true);
+            }
+        });
+    }
+    
    
     
     class Room {
@@ -328,7 +338,7 @@ public class ChatRoom {
        
         public void broadcastMessage(User user, String message) {
             if (this.messageHandle != null) {
-              //TODO send event to listener
+              sendRoomMessageEvent(user,this.roomId,this.messageHandle,message);
             }
         }
 
