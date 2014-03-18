@@ -16,10 +16,8 @@ Copyright 2014 Weswit s.r.l.
 package com.lightstreamer.adapters.Dart.room;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -28,8 +26,8 @@ public class ChatRoom {
 
     private ChatRoomListener listener;
     
-    private static final boolean ENTER = true;
-    private static final boolean EXIT = false;
+    static final boolean ENTER = true;
+    static final boolean EXIT = false;
     
     static final boolean REALTIME = true;
     private static final boolean SNAPSHOT = false;
@@ -44,7 +42,21 @@ public class ChatRoom {
         this.listener = listener;
     }
     
-    public User addUser(final String id) {
+    // USER INTERNAL HANDLING
+    
+    private User getUserForced(String id) {
+        synchronized(users) {
+            User user;
+            if (!users.containsKey(id)) {
+                user = this.addUser(id);
+            } else {
+                user = users.get(id);
+            }
+            return user;
+        }
+    }
+    
+    private User addUser(final String id) {
         synchronized(users) {
             User user = new User(this, id);
             users.put(id, user);
@@ -58,6 +70,110 @@ public class ChatRoom {
             return user;
         }
     }
+    
+    private void removeUser(final String id) {
+        synchronized(users) {
+            if (!users.containsKey(id)) {
+                return;
+            }
+            User user = users.remove(id);
+            
+            this.removeUserFromRooms(user);
+            
+            executor.execute(new Runnable() {
+                public void run() {
+                    listener.onUserDeleted(id);
+                }
+            });
+        }
+    }
+    
+    //synchronized(users)
+    private void removeUserFromRooms(User user) {
+        synchronized(rooms) {
+            Iterator<Room> userRooms = user.getRooms();
+            while(userRooms.hasNext()) {
+                Room room = userRooms.next();
+                user.leaveRoom(room);
+            }
+        }
+    }
+    
+    private void checkUser(User user) {
+        if (!user.isListened() && !user.isActive()) {
+            this.removeUser(user.getId());
+        }
+    }
+    
+    // USER LIFE-CYCLE
+        // IN
+    
+    public void startUser(String id) {
+        synchronized(users) {
+            User user = this.getUserForced(id);
+            user.setActive(true);
+        }
+    }
+    
+    public void startUserMessageListen(String id, Object handle) {
+        synchronized(users) {
+            User user = this.getUserForced(id);
+            user.setHandle(handle);
+        }
+    }
+    
+    public void startUserStatusListen(String id, Object userStatusHandle) {
+        synchronized(users) {
+            User user = this.getUserForced(id);
+            user.setStatusHandle(userStatusHandle);
+            
+            Map<String,String> extra = new HashMap<String,String>();
+            extra.putAll(user.getExtraProps());
+            this.sendUserStatusEvent(user, user.getNick(), user.getStatusId(), user.getStatus(), extra, userStatusHandle, SNAPSHOT);
+        }
+    }
+    
+    // USER LIFE-CYCLE
+        // OUT
+    
+    public void stopUser(String id) {
+        synchronized(users) {
+            if (!users.containsKey(id)) {
+                return;
+            }
+            User user = users.get(id);
+            user.setActive(false);
+            
+            this.checkUser(user);
+        }
+    }
+    
+    public void stopUserMessageListen(String id) {
+        synchronized(users) {
+            if (!users.containsKey(id)) {
+                return;
+            }
+            User user = users.get(id);
+            user.setHandle(null);
+            
+            this.checkUser(user);
+        }
+    }
+    
+    public void stopUserStatusListen(String id) {
+        synchronized(users) {
+            if (!users.containsKey(id)) {
+                return;
+            }
+            User user = users.get(id);
+            user.setStatusHandle(null);
+            
+            this.checkUser(user);
+        }
+    }
+
+    // USER ACTIONS 
+        // PROPERTIES
     
     public void changeUserNick(String id, String nick) {
         synchronized(users) {
@@ -78,6 +194,9 @@ public class ChatRoom {
             user.setStatus(status,statusId);
         }
     }
+    
+    // USER ACTIONS 
+        // ROOMS
     
     public void enterRoom(String id, String roomId) {
         synchronized(users) {
@@ -108,6 +227,25 @@ public class ChatRoom {
         }
     }
     
+    public void leaveAllRooms(String id) {
+        synchronized(users) {
+            if (!users.containsKey(id)) {
+                return;
+            }
+            User user = this.getUserForced(id);
+            
+            this.removeUserFromRooms(user);
+            
+            if (!user.isListened()) {
+                this.removeUser(id);
+            }
+            
+        }
+    }
+    
+    // USER ACTIONS 
+        // CHAT
+    
     public void broadcastMessage(String id, String roomId, String message) {
         synchronized(users) {
             synchronized(rooms) {
@@ -122,99 +260,7 @@ public class ChatRoom {
         
     }
     
-    private User getUserForced(String id) {
-        synchronized(users) {
-            User user;
-            if (!users.containsKey(id)) {
-                user = this.addUser(id);
-            } else {
-                user = users.get(id);
-            }
-            return user;
-        }
-    }
-    
-
-    public void startUserMessageListen(String id, Object handle) {
-        synchronized(users) {
-            User user = this.getUserForced(id);
-            user.setHandle(handle);
-        }
-    }
-    
-    public void startUserStatusListen(String id, Object userStatusHandle) {
-        synchronized(users) {
-            User user = this.getUserForced(id);
-            user.setStatusHandle(userStatusHandle);
-            
-            Map<String,String> extra = new HashMap<String,String>();
-            extra.putAll(user.getExtraProps());
-            this.sendUserStatusEvent(user, user.getNick(), user.getStatusId(), user.getStatus(), extra, userStatusHandle, SNAPSHOT);
-        }
-    }
-    
-    public Object getUserStatusHandle(String id) {
-        synchronized(users) {
-            if (!users.containsKey(id)) {
-                return null;
-            } 
-            
-            User user = users.get(id);
-            return user.getStatusHandle();
-        }
-    }
-
-    
-    public void removeUser(final String id) {
-        synchronized(users) {
-            if (!users.containsKey(id)) {
-                return;
-            }
-            User user = users.remove(id);
-            
-            synchronized(rooms) {
-                Iterator<Room> userRooms = user.getRooms();
-                while(userRooms.hasNext()) {
-                    Room room = userRooms.next();
-                    user.leaveRoom(room);
-                }
-            }
-
-            executor.execute(new Runnable() {
-                public void run() {
-                    listener.onUserDeleted(id);
-                }
-            });
-        }
-    }
-    
-    public void stopUserMessageListen(String id) {
-        synchronized(users) {
-            if (!users.containsKey(id)) {
-                return;
-            }
-            User user = users.get(id);
-            user.setHandle(null);
-            
-            if (!user.isListened()) {
-                this.removeUser(id);
-            }
-        }
-    }
-    
-    public void stopUserStatusListen(String id) {
-        synchronized(users) {
-            if (!users.containsKey(id)) {
-                return;
-            }
-            User user = users.get(id);
-            user.setStatusHandle(null);
-            
-            if (!user.isListened()) {
-                this.removeUser(id);
-            }
-        }
-    }
+    // USER EVENTS    
         
     //synchronized(users) {
     void sendUserStatusEvent(final User user, final String nick, final String statusId, final String status, final Map<String,String> extra, final Object userStatusHandle, final boolean realTimeEvent) {
@@ -225,18 +271,45 @@ public class ChatRoom {
         });
     }
     
+    // ROOM INTERNAL HANDLING
+    
     private Room getRoomForced(String roomId) {
         synchronized(rooms) {
             Room room = null;
             if (!rooms.containsKey(roomId)) {
-                room = new Room(roomId);
-                rooms.put(roomId, room);
+                room = this.addRoom(roomId);
             } else {
                 room = rooms.get(roomId);
             }
             return room;
         }
     }
+    
+    private Room addRoom(String roomId) {
+        synchronized(rooms) {
+            Room room = new Room(this, roomId);
+            rooms.put(roomId, room);
+            return room;
+        }
+    }
+    
+    private void removeRoom(String roomId) {
+        synchronized(rooms) {
+            if (!rooms.containsKey(roomId)) {
+                return;
+            }
+            rooms.remove(roomId);
+        }
+    }
+    
+    private void checkRoom(Room room) {
+        if (room.isEmpty() && !room.isListened()) {
+            this.removeRoom(room.getId());
+        }
+    }
+    
+    // ROOM LIFECYCLE
+        // IN
     
     public void startRoomListen(final String roomId, final Object roomStatusHandle) {
         
@@ -260,19 +333,6 @@ public class ChatRoom {
         }
     }
     
-    public void stopRoomListen(String roomId) {
-        synchronized(rooms) {
-            if (!rooms.containsKey(roomId)) {
-                return;
-            }
-            Room room = rooms.get(roomId);
-            room.setStatusHandle(null);
-            if (room.isEmpty() && !room.isListened()) {
-                rooms.remove(roomId);
-            }
-        }
-    }
-    
     public void startRoomChatListen(String roomId, Object roomChatHandle) {
         synchronized(rooms) {
             Room room = this.getRoomForced(roomId);
@@ -282,6 +342,21 @@ public class ChatRoom {
         
     }
 
+    // ROOM LIFECYCLE
+        // OUT
+    
+    public void stopRoomListen(String roomId) {
+        synchronized(rooms) {
+            if (!rooms.containsKey(roomId)) {
+                return;
+            }
+            Room room = rooms.get(roomId);
+            room.setStatusHandle(null);
+            
+            this.checkRoom(room);
+        }
+    }
+    
     public void stopRoomChatListen(String roomId) {
         synchronized(rooms) {
             if (!rooms.containsKey(roomId)) {
@@ -289,15 +364,16 @@ public class ChatRoom {
             }
             Room room = rooms.get(roomId);
             room.setMessageHandle(null);
-            if (room.isEmpty() && !room.isListened()) {
-                rooms.remove(roomId);
-            }
+            
+            this.checkRoom(room);
         }
         
     }
+    
+    // ROOM EVENTS
 
     //synchronized(rooms) {
-    private void sendRoomStatusEvent(final User user, final String roomId, final Object roomStatusHandle, boolean entering, final boolean realTimeEvent) {
+    void sendRoomStatusEvent(final User user, final String roomId, final Object roomStatusHandle, boolean entering, final boolean realTimeEvent) {
         if (entering) {
             executor.execute(new Runnable() {
                 public void run() {
@@ -314,68 +390,13 @@ public class ChatRoom {
     }
     
     
-    private void sendRoomMessageEvent(final User user, final String room, final Object messageHandle, final String message) {
+    void sendRoomMessageEvent(final User user, final String room, final Object messageHandle, final String message) {
         final String nick = user.getNick();
         executor.execute(new Runnable() {
             public void run() {
                 listener.onUserMessage(nick,message,room,messageHandle,true);
             }
         });
-    }
-    
-   
-    
-    class Room {
-        
-        private String roomId;
-        private Set<String> users = new HashSet<String>();
-        private Object statusHandle = null;
-        private Object messageHandle = null;
-        
-        public Room(String roomId) {
-            this.roomId = roomId;
-        }
-       
-        public void broadcastMessage(User user, String message) {
-            if (this.messageHandle != null) {
-              sendRoomMessageEvent(user,this.roomId,this.messageHandle,message);
-            }
-        }
-
-        public boolean isEmpty() {
-            return users.isEmpty();
-        }
-        
-        public boolean isListened() {
-            return this.statusHandle != null || this.messageHandle != null;
-        }
-
-        public void setStatusHandle(Object roomStatusHandle) {
-            this.statusHandle = roomStatusHandle;
-        }
-        
-        public void setMessageHandle(Object messageHandle) {
-            this.messageHandle = messageHandle;
-        }
-        
-        void addUser(User user) {
-            this.users.add(user.getId());
-            if (this.statusHandle != null) {
-                sendRoomStatusEvent(user, this.roomId, this.statusHandle, ENTER, REALTIME);
-            }
-        }
-
-        void removeUser(User user) {
-            if (this.users.remove(user.getId()) && this.statusHandle != null ) {
-                sendRoomStatusEvent(user, this.roomId, this.statusHandle, EXIT, REALTIME);
-            }
-        }
-        
-        public Iterator<String> getUsers() {
-            return this.users.iterator();
-        }
-        
-
     }
 
     

@@ -101,10 +101,10 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
                     try {
                         this.loadFeed();
                     } catch (CreditsException e) {
-                        //TODO what now?
+                        throw new ItemsException("Feed unavailable");
                     }
                     ChatRoom chat = this.feed.getChatFeed();
-                    chat.addUser(val); 
+                    chat.startUser(val);
                     split[i] = Constants.USER_SUBSCRIPTION + val;
                 }
             }
@@ -253,13 +253,18 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
             Map<String,String> sessionInfo = sessions.remove(session);
             String id = sessionInfo.get(Constants.USER_ID);
             if (id != null) {
+                ids.remove(id);
+                
                 try {
                     this.loadFeed();
                 } catch (CreditsException e) {
-                    //TODO what now?
+                    logger.error("Unexpected: feed not available");
+                    return;
                 }
-                ids.remove(id);
-                this.feed.getChatFeed().removeUser(id);
+                
+                ChatRoom chat = this.feed.getChatFeed();
+                chat.leaveAllRooms(id);
+                chat.stopUser(id);
             }
         }
     }

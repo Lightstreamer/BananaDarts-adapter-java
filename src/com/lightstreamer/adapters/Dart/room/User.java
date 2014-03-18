@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.lightstreamer.adapters.Dart.room.ChatRoom.Room;
 
 public class User {
 
@@ -37,6 +36,7 @@ public class User {
     private Object messagesHandle = null;
     
     private Set<Room> rooms = new HashSet<Room>();
+    private boolean active = false;
     
     
     User(ChatRoom chatRoom, String id) {
@@ -116,6 +116,14 @@ public class User {
     
     Iterator<Room> getRooms() {
         return rooms.iterator();
+    }
+
+    public void setActive(boolean active) {
+        this.active  = active;
+    }
+
+    public boolean isActive() {
+        return this.active;
     }
     
 
