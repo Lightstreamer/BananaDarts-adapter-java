@@ -24,8 +24,9 @@ public class Constants {
     public static final String SPLIT_CHAR_REG = "\\|";
     public static final String SPLIT_CHAR = "|";
     
-    public static final String LOGGER_CAT = "LS_demos_Logger.DartDemo";
-    //private static final String TRACER_CAT = "LS_LeapDemo_Logger.tracer";
+    public static final String LOGGER_CAT = "LS_demos_Logger.Dart.adapters";
+    public static final String CHAT_CAT = "LS_demos_Logger.Dart.chat";
+    public static final String WORLD_CAT = "LS_demos_Logger.Dart.world";
     
     public static final String USER_ID = "USER_ID";
     

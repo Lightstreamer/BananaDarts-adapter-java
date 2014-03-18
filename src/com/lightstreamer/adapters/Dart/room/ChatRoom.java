@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
+
+import com.lightstreamer.adapters.Dart.Constants;
+
 
 public class ChatRoom {
 
@@ -30,7 +34,9 @@ public class ChatRoom {
     static final boolean EXIT = false;
     
     static final boolean REALTIME = true;
-    private static final boolean SNAPSHOT = false;
+    static final boolean SNAPSHOT = false;
+    
+    private Logger logger = Logger.getLogger(Constants.CHAT_CAT);
     
     
     private HashMap<String,User> users = new HashMap<String,User>();
@@ -58,6 +64,8 @@ public class ChatRoom {
     
     private User addUser(final String id) {
         synchronized(users) {
+            logger.info("Creating new user " + id);
+            
             User user = new User(this, id);
             users.put(id, user);
             
@@ -76,6 +84,8 @@ public class ChatRoom {
             if (!users.containsKey(id)) {
                 return;
             }
+            logger.info("Destroying user " + id);
+            
             User user = users.remove(id);
             
             this.removeUserFromRooms(user);
@@ -110,6 +120,8 @@ public class ChatRoom {
     
     public void startUser(String id) {
         synchronized(users) {
+            logger.trace("User startup " + id);
+            
             User user = this.getUserForced(id);
             user.setActive(true);
         }
@@ -117,6 +129,8 @@ public class ChatRoom {
     
     public void startUserMessageListen(String id, Object handle) {
         synchronized(users) {
+            logger.trace("User private messages startup " + id);
+            
             User user = this.getUserForced(id);
             user.setHandle(handle);
         }
@@ -124,6 +138,8 @@ public class ChatRoom {
     
     public void startUserStatusListen(String id, Object userStatusHandle) {
         synchronized(users) {
+            logger.trace("User status messages startup " + id);
+            
             User user = this.getUserForced(id);
             user.setStatusHandle(userStatusHandle);
             
@@ -141,6 +157,8 @@ public class ChatRoom {
             if (!users.containsKey(id)) {
                 return;
             }
+            logger.trace("User stop " + id);
+            
             User user = users.get(id);
             user.setActive(false);
             
@@ -153,6 +171,8 @@ public class ChatRoom {
             if (!users.containsKey(id)) {
                 return;
             }
+            logger.trace("User private messages stop " + id);
+            
             User user = users.get(id);
             user.setHandle(null);
             
@@ -165,6 +185,8 @@ public class ChatRoom {
             if (!users.containsKey(id)) {
                 return;
             }
+            logger.trace("User status messages stop " + id);
+            
             User user = users.get(id);
             user.setStatusHandle(null);
             
@@ -180,6 +202,8 @@ public class ChatRoom {
             if (!users.containsKey(id)) {
                 return;
             }
+            logger.debug("User new nick " + id + ": " + nick);
+            
             User user = users.get(id);
             user.setNick(nick);
         }
@@ -190,6 +214,8 @@ public class ChatRoom {
             if (!users.containsKey(id)) {
                 return;
             }
+            logger.debug("User new status " + id + ": " + status);
+            
             User user = users.get(id);
             user.setStatus(status,statusId);
         }
@@ -203,6 +229,8 @@ public class ChatRoom {
             if (!users.containsKey(id)) {
                 return;
             }
+            logger.trace("User entering room " + id + ": " + roomId);
+            
             User user = users.get(id);
             Room room = this.getRoomForced(roomId);
             user.enterRoom(room);
@@ -216,6 +244,8 @@ public class ChatRoom {
                 if (!users.containsKey(id) || !rooms.containsKey(roomId)) {
                     return;
                 }
+                logger.trace("User leaving room " + id + ": " + roomId);
+                
                 User user = users.get(id);
                 Room room = rooms.get(roomId);
                 user.leaveRoom(room);
@@ -252,6 +282,8 @@ public class ChatRoom {
                 if (!users.containsKey(id) || !rooms.containsKey(roomId)) {
                     return;
                 }
+                logger.debug("User " + id + " message to room " + roomId + ": " + message);
+                
                 User user = users.get(id);
                 Room room = rooms.get(roomId);
                 room.broadcastMessage(user,message);
@@ -287,6 +319,8 @@ public class ChatRoom {
     
     private Room addRoom(String roomId) {
         synchronized(rooms) {
+            logger.info("Creating new room " + roomId);
+            
             Room room = new Room(this, roomId);
             rooms.put(roomId, room);
             return room;
@@ -298,6 +332,8 @@ public class ChatRoom {
             if (!rooms.containsKey(roomId)) {
                 return;
             }
+            logger.info("Destroying room " + roomId);
+            
             rooms.remove(roomId);
         }
     }
@@ -315,6 +351,8 @@ public class ChatRoom {
         
         synchronized(rooms) {
             Room room = this.getRoomForced(roomId);
+            
+            logger.trace("Room user-list startup " + roomId);
             
             room.setStatusHandle(roomStatusHandle);
             
@@ -335,6 +373,8 @@ public class ChatRoom {
     
     public void startRoomChatListen(String roomId, Object roomChatHandle) {
         synchronized(rooms) {
+            logger.trace("Room chat startup " + roomId);
+            
             Room room = this.getRoomForced(roomId);
             
             room.setMessageHandle(roomChatHandle);
@@ -350,6 +390,8 @@ public class ChatRoom {
             if (!rooms.containsKey(roomId)) {
                 return;
             }
+            logger.trace("Room user-list stop " + roomId);
+            
             Room room = rooms.get(roomId);
             room.setStatusHandle(null);
             
@@ -362,6 +404,8 @@ public class ChatRoom {
             if (!rooms.containsKey(roomId)) {
                 return;
             }
+            logger.trace("Room chat stop " + roomId);
+            
             Room room = rooms.get(roomId);
             room.setMessageHandle(null);
             
