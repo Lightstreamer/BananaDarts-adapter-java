@@ -39,7 +39,6 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
             new ConcurrentHashMap<String, DartDataAdapter>();
    
     public Logger logger;
-    //public Logger tracer;
     
     private Universe universe = new Universe();
     private ChatRoom chat = new ChatRoom(this);
@@ -59,10 +58,8 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
         } //else the bridge to logback is expected
         
         logger = Logger.getLogger(Constants.LOGGER_CAT);
-        //tracer = Logger.getLogger(TRACER_CAT);
         
         logger.info("Adapter Logger start.");
-        //tracer.info("Trace Logger start.");
         
         // Read the Adapter Set name, which is supplied by the Server as a parameter
         String adapterSetId = (String) params.get("adapters_conf.id");
@@ -72,7 +69,7 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
         feedMap.put(adapterSetId, this);
         
         
-        logger.info("LeapMotionAdapter ready");
+        logger.info("DartDataAdapter ready");
         
     }
     
@@ -130,12 +127,10 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
             chat.startRoomChatListen(val,handle);
             
         } else {
-            //MERGE subscription for user status and nick + their commands and forced positions 
+            //MERGE subscription for user status and nick + their commands and positions 
             logger.debug("User status subscription: " + item);
+            
             chat.startUserStatusListen(item,handle);
-            
-            
-            //universe.flushUserStatus(item);
         }
     }
 
@@ -146,20 +141,22 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
         String val;
         if (( val = Constants.getVal(item,Constants.USER_SUBSCRIPTION)) != null) {
             logger.debug("User unsubscription: " + item);
+            
             chat.stopUserMessageListen(val);
             
         } else if (( val = Constants.getVal(item,Constants.ROOMCHATLIST_SUBSCRIPTION)) != null) {
             logger.debug("Room list unsubscription: " + val);
+            
             chat.stopRoomListen(val);
             
         } else if (( val = Constants.getVal(item,Constants.ROOMCHAT_SUBSCRIPTION)) != null) {
-            //DISTINCT chat for the room
             logger.debug("Room chat unsubscription: " + val);
             
             chat.stopRoomChatListen(val);
             
         } else {
             logger.debug("User status unsubscription: " + item);
+            
             chat.stopUserStatusListen(item);
         }
     }
@@ -206,7 +203,9 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
     @Override
     public void onUserStatusChange(User user, String nick, String statusId, String status, Map<String,String> extra, Object userStatusHandle, boolean realTimeEvent) {
         String id = user.getId();
-        logger.debug(id + " has new status/nick");
+        if (logger.isTraceEnabled()) { //just use trace as it contains the movements
+            logger.trace(id + " has new info");
+        }
         
         if (extra == null) {
             extra =  new HashMap<String, String>();
@@ -226,7 +225,7 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
 
     @Override
     public void onUserMessage(String user, String message, String room, Object roomHandle, boolean realTimeEvent) {
-        logger.debug(user + " sent a message to " + room);
+        logger.debug(user + " sent a message to room " + room);
         
         Map<String,String> update = new HashMap<String,String>();
         update.put("nick", user);
