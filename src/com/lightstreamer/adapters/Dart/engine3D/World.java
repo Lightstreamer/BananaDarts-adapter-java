@@ -18,16 +18,18 @@ package com.lightstreamer.adapters.Dart.engine3D;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.log4j.Logger;
+
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class World extends Thread {
     
+    private Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
+    
     private String id=null;
     
     private ConcurrentHashMap<String,Dart> darts = new ConcurrentHashMap<String,Dart>();
-    private Object scoreHandle = null;
-    
 
     private int frameInterval = 0;
     
@@ -38,23 +40,17 @@ public class World extends Thread {
         this.id = id;
         
         this.frameInterval = frameInterval;
+        
+        logger.info("A new world is born: " + id + " ("+this.frameInterval+")");
     }
     
     synchronized void setFrameInterval(int frameInterval) {
+        logger.info(this.id+"|Frame interval changed: " + frameInterval);
         this.frameInterval = frameInterval;
     }
 
-    synchronized boolean isListened() {
-        return this.scoreHandle != null;
-    }
-    
     synchronized boolean isEmpty() {
         return darts.isEmpty();
-    }
-    
-    synchronized void setScoreHandle(Object handle) {
-        this.scoreHandle = handle;
-        //TODO snapshot?
     }
     
     synchronized void addUser(User user) {
@@ -65,22 +61,28 @@ public class World extends Thread {
         Dart player = new Dart(user,id,this);
         
         this.darts.put(id,player); 
+        logger.info(this.id+"|A new user entered" + id);
     }
     
 
     synchronized void removeUser(String id) {
         this.darts.remove(id);
-        //this.sendPlayerStatus(id, this.id, this.handle, null, EXIT, REALTIME);
+        logger.info(this.id+"|A user left" + id);
     }
     
     synchronized void armageddon() {
         this.stop = true;
+        logger.info(this.id+"|World ended");
     }
     
     @Override
     public void run () {
         
         while (!stop) {
+            
+            if (logger.isTraceEnabled()) {
+                logger.trace(this.id+"|generating frame");
+            }
                         
             Enumeration<Dart> players = this.darts.elements();
             while(players.hasMoreElements()) {
@@ -89,6 +91,10 @@ public class World extends Thread {
                 //TODO I do not need to continuously calculate the position: animation is performed client side,
                 //adapter only need to know when the animation ends to send the score over
                 player.translate();
+            }
+            
+            if (logger.isTraceEnabled()) {
+                logger.trace(this.id+"|frame generated");
             }
             
             try {
@@ -102,6 +108,9 @@ public class World extends Thread {
         if (!this.darts.containsKey(playerId)) {
             return;
         }
+        if (logger.isTraceEnabled()) {
+            logger.trace(this.id+"|throwing " + id);
+        }
         Dart player = this.darts.get(playerId);
         player.throwDart(x,y,z);
     }
@@ -110,6 +119,9 @@ public class World extends Thread {
         if (!this.darts.containsKey(playerId)) {
             return;
         }
+        if (logger.isTraceEnabled()) {
+            logger.trace(this.id+"|moving " + id);
+        }
         Dart player = this.darts.get(playerId);
         player.forcePosition(x, y, z);
     }
@@ -117,6 +129,9 @@ public class World extends Thread {
     public synchronized void resetScore(String playerId) {
         if (!this.darts.containsKey(playerId)) {
             return;
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace(this.id+"|resetting score " + id);
         }
         Dart player = this.darts.get(playerId);
         player.resetScore();

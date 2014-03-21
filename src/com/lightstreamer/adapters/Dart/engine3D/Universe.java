@@ -25,7 +25,7 @@ import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class Universe {
     
-    public static Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.LOGGER_CAT);
+    private static Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
     
     private Map<String,World> worlds = new HashMap<String,World>();
     
@@ -48,6 +48,8 @@ public class Universe {
         if (!worlds.containsKey(room)) {
             return;
         }
+        logger.info("User exiting world " + user.getId() + ": " + room);
+        
         String id = user.getId();
         World world = worlds.get(room);
         world.removeUser(id); 
@@ -56,30 +58,15 @@ public class Universe {
     }
 
     public synchronized void addPlayerToWorld(User user, String room) {
+        logger.info("User entering world " + user.getId() + ": " + room);
+        
         World world = this.getWorldForced(room);
         world.addUser(user);
     }
-       
-    public void stopWatchingWorldScore(String id) {
-        if (!worlds.containsKey(id)) {
-            return;
-        }
-        World world = worlds.get(id);
-        world.setScoreHandle(null);
-        
-        this.verifyWorld(id,world);
-        
-    }
-
-    public void startWatchingWorldScore(String id, Object handle) {
-        World world = this.getWorldForced(id);
-        
-        world.setScoreHandle(handle);
-    }
-    
-    
+          
     private synchronized void verifyWorld(String id, World world) {
-        if (world.isEmpty() && !world.isListened()) {
+        if (world.isEmpty()) {
+            logger.info("World is now useless: " + id);
             world.armageddon();
             worlds.remove(id);
         }
@@ -89,6 +76,9 @@ public class Universe {
         if (!worlds.containsKey(worldId)) {
             return;
         }
+        if (logger.isTraceEnabled()) {
+            logger.trace("Forwarding throw command for player" + playerId + " to world " + worldId);
+        }
         World world = worlds.get(worldId);
         world.release(playerId,x,y,z);
     }
@@ -97,6 +87,9 @@ public class Universe {
         if (!worlds.containsKey(worldId)) {
             return;
         }
+        if (logger.isTraceEnabled()) {
+            logger.trace("Forwarding move command for player" + playerId + " to world " + worldId);
+        }
         World world = worlds.get(worldId);
         world.move(playerId,x,y,z);
     }
@@ -104,6 +97,9 @@ public class Universe {
     public void resetScore(String playerId, String worldId) {
         if (!worlds.containsKey(worldId)) {
             return;
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("Forwarding reset command for player" + playerId + " to world " + worldId);
         }
         World world = worlds.get(worldId);
         world.resetScore(playerId);

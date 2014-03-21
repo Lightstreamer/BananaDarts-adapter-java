@@ -21,12 +21,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.croftsoft.core.lang.EnumUnknownException;
 import com.croftsoft.core.math.axis.AxisAngle;
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class Dart implements IBody {
+    
+    private Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
 
     private String id;
     
@@ -178,11 +182,19 @@ public class Dart implements IBody {
             return;
         }
         
+        if (logger.isTraceEnabled()) {
+            logger.trace(this.id+"|Calculating new position");
+        }
+        
         long tNow = new Date().getTime() - this.timestamp;
 
         double x = this.calculateAxisPos(this.startX,this.vX,tNow);
         double y = this.calculateYPosition(this.startY,this.vY,tNow);
         double z = this.calculateAxisPos(this.startZ,this.vZ,tNow);
+        
+        if (logger.isTraceEnabled()) {
+            logger.trace(this.id+"|New position is " + x + "|" + y + "|" + z);
+        }
         
         double endXt = this.getFinalTimeIfOverflow(x, Constants.MAX_SIZE_X, this.startX, this.vX,false);
         double endYt = this.getFinalTimeIfOverflow(y, Constants.MAX_SIZE_Y, this.startY, this.vY,true);
@@ -199,6 +211,14 @@ public class Dart implements IBody {
                 x = tmpX;
                 y = tmpY;
                 score = DartBoard.getScore(x, y);
+                
+                if (logger.isDebugEnabled()) {
+                    logger.debug(this.id+"|Collision with dartboard at " + x + "|" + y + "|" + z);
+                }
+                if (score > 0) {
+                    logger.info(this.id+"|Scored " + score);
+                }
+                
             } else {
                 endZt = this.getFinalTimeIfOverflow(z, Constants.MAX_SIZE_Z, this.startZ, this.vZ,false);
             }
@@ -213,6 +233,10 @@ public class Dart implements IBody {
             x = this.calculateAxisPos(this.startX,this.vX,tEnd);
             y = this.calculateYPosition(this.startY,this.vY,tEnd);
             z = this.calculateAxisPos(this.startZ,this.vZ,tEnd);
+            
+            if (logger.isDebugEnabled()) {
+                logger.debug(this.id+"|Collision with wall at " + x + "|" + y + "|" + z);
+            }
             
             score = 0;
         }
@@ -330,7 +354,11 @@ public class Dart implements IBody {
     }
     
     private void fillPositionMap(Map<String,String> model) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(this.id+"|preparing position update");
+        }
         try {
+            
             model.put("posX", toBase64(this.x));
             model.put("posY", toBase64(this.y));
             model.put("posZ", toBase64(this.z));
@@ -341,12 +369,20 @@ public class Dart implements IBody {
     }
     
     private void fillImpulseMap(Map<String,String> model) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(this.id+"|preparing speed update");
+        }
+        
         model.put("dVx", String.valueOf(this.vX));
         model.put("dVy", String.valueOf(this.vY));
         model.put("dVz", String.valueOf(this.vZ));
     }
     
     private void fillScoreMap(Map<String,String> model) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(this.id+"|preparing score update");
+        }
+        
         model.put("lastScore", String.valueOf(this.lastScore));
         model.put("numThrows", String.valueOf(this.numThrows));
         model.put("totalScore", String.valueOf(this.totalScore));
@@ -355,6 +391,7 @@ public class Dart implements IBody {
     
     public void updateOwner(boolean pos, boolean speed, boolean score) {
         Map<String,String> update = new HashMap<String,String>();
+        
         if (pos) {
             this.fillPositionMap(update);
         }
