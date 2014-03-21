@@ -48,8 +48,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
     private ConcurrentHashMap<String,String> ids = new ConcurrentHashMap<String,String>();
     
     private DartDataAdapter feed;
-        
-    private static final String LOGGER_CAT = "LS_demos_Logger.LeapDemo";
+
     public static Logger logger;
 
     @Override
@@ -65,7 +64,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
             }
         } //else the bridge to logback is expected
         
-        logger = Logger.getLogger(LOGGER_CAT);
+        logger = Logger.getLogger(Constants.LOGGER_CAT);
         
         // Read the Adapter Set name, which is supplied by the Server as a parameter
         this.adapterSetId = (String) params.get("adapters_conf.id");
@@ -81,6 +80,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
                 synchronized(sessions) {
                     Map<String,String> sessionInfo = sessions.get(session);
                     if (sessionInfo == null) {
+                        logger.warn("Can't find session " + session);
                         throw new ItemsException("Can't find session");
                     }
                     
@@ -88,11 +88,13 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
                         //currently permit only one id per session 
                         String prevVal = sessionInfo.get(Constants.USER_ID);
                         if (!val.equals(prevVal)) {
+                            logger.warn("Session alredy owns an ID: " + val);
                             throw new ItemsException("Session alredy owns an ID: " + val);
                         }
                         
                     } else {
                         if (ids.containsKey(val)) {
+                            logger.debug("Id already taken: " + val);
                             throw new ItemsException("Id already taken, try again");
                         } 
                         sessionInfo.put(Constants.USER_ID, val);
@@ -142,10 +144,12 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
         synchronized(sessions) {
             Map<String,String> sessionInfo = sessions.get(session);
             if (sessionInfo == null) {
+                logger.warn("Can't find session " + session);
                 throw new CreditsException(-1, "Can't find user id (session missing)");
             }
             id = sessionInfo.get(Constants.USER_ID);
             if (id == null) {
+                logger.warn("Can't find user id");
                 throw new CreditsException(-2, "Can't find user id (value missing)");
             }
         }
@@ -159,48 +163,71 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
         //chat| <-- message the room
         String val;
         if (( val = Constants.getVal(message,Constants.NICK_MESSAGE)) != null) {
+            logger.debug("new nick message from "+id+" received: " + message);
+            
             ChatRoom chat = this.feed.getChatFeed();
             chat.changeUserNick(id, val);
             
         } else if (( val = Constants.getVal(message,Constants.STATUS_MESSAGE)) != null) {
+            logger.debug("new status message from "+id+" received: " + message);
+            
             ChatRoom chat = this.feed.getChatFeed();
             chat.changeUserStatus(id, val, Constants.VOID_STATUS_ID);
             
         } else if (( val = Constants.getVal(message,Constants.ENTER_ROOM)) != null) {
+            logger.debug("new enter-room message from "+id+" received: " + message);
+            
             ChatRoom chat = this.feed.getChatFeed();
             chat.enterRoom(id,val);
             
         } else if (( val = Constants.getVal(message,Constants.EXIT_ROOM)) != null) {
+            logger.debug("new exit-room message from "+id+" received: " + message);
+            
             ChatRoom chat = this.feed.getChatFeed();
             chat.leaveRoom(id,val);
             
         } else if (( val = Constants.getVal(message,Constants.RELEASE_MESSAGE)) != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("new release message from "+id+" received: " + message);
+            }
+            
             Universe universe = this.feed.getUniverse();
             String[] values = val.split(Constants.SPLIT_CHAR_REG);
             double[] dobuleValues = getDoubles(values);
             universe.release(id,values[0],dobuleValues[0],dobuleValues[1],dobuleValues[2]);
             
         } else if (( val = Constants.getVal(message,Constants.MOVE_MESSAGE)) != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("new move message from "+id+" received: " + message);
+            }
+            
             Universe universe = this.feed.getUniverse();
             String[] values = val.split(Constants.SPLIT_CHAR_REG);
             double[] dobuleValues = getDoubles(values);
             universe.move(id,values[0],dobuleValues[0],dobuleValues[1],dobuleValues[2]);
         
         } else if (( val = Constants.getVal(message,Constants.RESET_MESSAGE)) != null) {
+            logger.debug("new reset message from "+id+" received: " + message);
+            
             Universe universe = this.feed.getUniverse();
             universe.resetScore(id,val);
 
         } else if (( val = Constants.getVal(message,Constants.CHAT_MESSAGE)) != null) {
+            logger.debug("new chat message from "+id+" received: " + message);
+            
             ChatRoom chat = this.feed.getChatFeed();
             String[] vals = val.split(Constants.SPLIT_CHAR_REG);
             chat.broadcastMessage(id,vals[0],vals[1]);
+            
+        } else {
+            logger.warn("unexpected message from "+id+" received: " + message);
+            throw new CreditsException(-3, "Unexpected message");
         }
     }
     
-    private static double[] getDoubles(String[] values) {
+    private static double[] getDoubles(String[] values) throws CreditsException {
         if (values.length != 4) {
-            //TODO throw
-            return null;
+            throw new CreditsException(-4, "wrongly formatted message");
         }
         double[] res = new double[3];
         try {
@@ -208,8 +235,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
             res[1] = Double.parseDouble(values[2]);
             res[2] = Double.parseDouble(values[3]);
         } catch(NumberFormatException nf) {
-            //TODO throw
-            return null;
+            throw new CreditsException(-5, "wrongly formatted number");
         }
         return res;
     }
@@ -243,6 +269,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
     @Override
     public void notifyNewSession(String user, String session, Map sessionInfo) throws CreditsException, NotificationException {
         // Register the session details on the sessions HashMap.
+        logger.info("New session available " + session);
         sessions.put(session, sessionInfo);
     }
     
@@ -250,6 +277,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
     public void notifySessionClose(String session) throws NotificationException {
         synchronized(sessions) {
             //we have to remove session informations from the session HashMap
+            logger.info("Clearing session " + session);
             Map<String,String> sessionInfo = sessions.remove(session);
             String id = sessionInfo.get(Constants.USER_ID);
             if (id != null) {
