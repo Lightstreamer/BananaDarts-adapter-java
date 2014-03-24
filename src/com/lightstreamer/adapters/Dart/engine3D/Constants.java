@@ -21,9 +21,9 @@ public class Constants {
         return cm*4.37445319335;
     }
     
-    public static final double MAX_SIZE_X = cmToUnit(500/2); 
-    public static final double MAX_SIZE_Y = cmToUnit(300/2);
-    public static final double MAX_SIZE_Z = cmToUnit(236.855/2); //represents half the length of the room
+    public static final double MAX_SIZE_X = Math.round(cmToUnit(500))/2; 
+    public static final double MAX_SIZE_Y = Math.round(cmToUnit(300))/2;
+    public static final double MAX_SIZE_Z = Math.round(cmToUnit(236.855))/2; //represents half the length of the room
     
     public static final double CENTER_Y = cmToUnit(172.2) - MAX_SIZE_Y; //NB floor is @ MAX_SIZE_Y units from the bottom of the room
     
