@@ -1,8 +1,8 @@
 # Lightstreamer - Multiplayer Darts for Leap Motion - Java Adapter #
 <!-- START DESCRIPTION lightstreamer-example-darts-leapmotion-adapter-java -->
 
-Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, Dart game running in the browser and using 
-[Lightstreamer](http://www.lightstreamer.com) for it real-time communication needs.  
+Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, dart game running in the browser and using 
+[Lightstreamer](http://www.lightstreamer.com) for its real-time communication needs.  
 
 <!-- END DESCRIPTION lightstreamer-example-darts-leapmotion-adapter-java -->
 
