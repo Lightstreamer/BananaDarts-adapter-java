@@ -141,6 +141,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
         
         //get the user id of the current user
         String id = null;
+        String IP = null;
         synchronized(sessions) {
             Map<String,String> sessionInfo = sessions.get(session);
             if (sessionInfo == null) {
@@ -152,6 +153,8 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
                 logger.warn("Can't find user id");
                 throw new CreditsException(-2, "Can't find user id (value missing)");
             }
+            
+            IP =  sessionInfo.get("REMOTE_IP");
         }
         
         //nick| <-- changing nick
@@ -166,13 +169,13 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
             logger.debug("new nick message from "+id+" received: " + message);
             
             ChatRoom chat = this.feed.getChatFeed();
-            chat.changeUserNick(id, val);
+            chat.changeUserNick(id, val, IP);
             
         } else if (( val = Constants.getVal(message,Constants.STATUS_MESSAGE)) != null) {
             logger.debug("new status message from "+id+" received: " + message);
             
             ChatRoom chat = this.feed.getChatFeed();
-            chat.changeUserStatus(id, val, Constants.VOID_STATUS_ID);
+            chat.changeUserStatus(id, val, Constants.VOID_STATUS_ID, IP);
             
         } else if (( val = Constants.getVal(message,Constants.ENTER_ROOM)) != null) {
             logger.debug("new enter-room message from "+id+" received: " + message);
@@ -217,7 +220,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
             
             ChatRoom chat = this.feed.getChatFeed();
             String[] vals = val.split(Constants.SPLIT_CHAR_REG);
-            chat.broadcastMessage(id,vals[0],vals[1]);
+            chat.broadcastMessage(id,vals[0],vals[1], IP);
             
         } else {
             logger.warn("unexpected message from "+id+" received: " + message);
@@ -270,7 +273,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
     public void notifyNewSession(String user, String session, Map sessionInfo) throws CreditsException, NotificationException {
         // Register the session details on the sessions HashMap.
         logger.info("New session available " + session);
-        sessions.put(session, sessionInfo);
+        sessions.put(session, sessionInfo); 
     }
     
     @Override
