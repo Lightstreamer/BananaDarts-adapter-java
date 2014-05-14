@@ -4,7 +4,7 @@
 Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, dart game running in the browser and using 
 [Lightstreamer](http://www.lightstreamer.com) for its real-time communication needs.  
 
-<!-- END DESCRIPTION lightstreamer-example-darts-leapmotion-adapter-java -->
+<!-- END DESCRIPTION bananadarts-adapter-java -->
 
 # Build #
 
