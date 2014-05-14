@@ -1,5 +1,5 @@
-# Lightstreamer - Multiplayer Darts for Leap Motion - Java Adapter #
-<!-- START DESCRIPTION lightstreamer-example-darts-leapmotion-adapter-java -->
+# Lightstreamer - Multiplayer Darts - Java Adapter #
+<!-- START DESCRIPTION bananadarts-adapter-java -->
 
 Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, dart game running in the browser and using 
 [Lightstreamer](http://www.lightstreamer.com) for its real-time communication needs.  
@@ -44,7 +44,7 @@ Launch Lightstreamer.
 ## Clients Using This Adapter ##
 <!-- START RELATED_ENTRIES -->
 
-* [Lightstreamer - Multiplayer Darts for Leap Motion - HTML (LeapJS, Three.js) Client](https://github.com/Weswit/Lightstreamer-example-Darts-LeapMotion-client-javascript)
+* [Lightstreamer - Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Weswit/BananaDarts-LeapMotion-client-javascript)
 
 <!-- END RELATED_ENTRIES -->
 
