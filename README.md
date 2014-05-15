@@ -44,7 +44,7 @@ Launch Lightstreamer.
 ## Clients Using This Adapter ##
 <!-- START RELATED_ENTRIES -->
 
-* [Lightstreamer - Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Weswit/BananaDarts-LeapMotion-client-javascript)
+* [Lightstreamer - Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Weswit/BananaDarts-client-javascript)
 
 <!-- END RELATED_ENTRIES -->
 
