@@ -1,4 +1,4 @@
-# Lightstreamer - Multiplayer Darts - Java Adapter #
+# Lightstreamer - Multiplayer Darts - Java Adapter
 <!-- START DESCRIPTION bananadarts-adapter-java -->
 
 Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, dart game running in the browser and using 
@@ -6,7 +6,18 @@ Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, dart game ru
 
 <!-- END DESCRIPTION bananadarts-adapter-java -->
 
-# Build #
+## Install
+
+* Download and install Lightstreamer Vivace (make sure you use Vivace edition, otherwise you will see a limit on the event rate; Vivace comes with a free non-expiring demo license for 20 connected users).
+* Go to the "adapters" folder of your Lightstreamer Server installation. Create a new folder and call it "Darts". Create a "lib" folder inside it.
+* Copy the "ls-adapter-interface.jar" file from "Lightstreamer/lib" in the newly created "lib" folder.
+* Copy the "croftsoft-math.jar" file from "Lightstreamer/lib" in the newly created "lib" folder.
+* Copy the jar of the adapter compiled in the previous section in the newly created "lib" folder.
+* Copy the "adapters.xml" file from the Deployment_LS folder of this project inside the "LeapDemo" folder.
+
+Launch Lightstreamer.
+
+## Build
 
 To build the adapter follow these steps:
 
@@ -28,26 +39,15 @@ Then go into the classes folder and run
 jar cf ../deploy/LS_darts_adapters.jar ./com
 ```
 
-# Deploy #
+## See Also
 
-* Download and install Lightstreamer Vivace (make sure you use Vivace edition, otherwise you will see a limit on the event rate; Vivace comes with a free non-expiring demo license for 20 connected users).
-* Go to the "adapters" folder of your Lightstreamer Server installation. Create a new folder and call it "Darts". Create a "lib" folder inside it.
-* Copy the "ls-adapter-interface.jar" file from "Lightstreamer/lib" in the newly created "lib" folder.
-* Copy the "croftsoft-math.jar" file from "Lightstreamer/lib" in the newly created "lib" folder.
-* Copy the jar of the adapter compiled in the previous section in the newly created "lib" folder.
-* Copy the "adapters.xml" file from the Deployment_LS folder of this project inside the "LeapDemo" folder.
-
-Launch Lightstreamer.
-
-# See Also #
-
-## Clients Using This Adapter ##
+### Clients Using This Adapter
 <!-- START RELATED_ENTRIES -->
 
 * [Lightstreamer - Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Weswit/BananaDarts-client-javascript)
 
 <!-- END RELATED_ENTRIES -->
 
-# Lightstreamer Compatibility Notes #
+## Lightstreamer Compatibility Notes
 
 * Compatible with Lightstreamer SDK for Java Adapters since 5.1
