@@ -11,7 +11,6 @@ Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, dart game ru
 * Download and install Lightstreamer Vivace (make sure you use Vivace edition, otherwise you will see a limit on the event rate; Vivace comes with a free non-expiring demo license for 20 connected users).
 * Get the "BananaDart" deploy folder from "deploy.zip" of the [latest release](https://github.com/Weswit/BananaDarts-adapter-java/releases) and unzip it.
 * Copy the just unzipped BananaDart folder into the "adapters" folder of your Lightstreamer Server installation.
-* Copy the "ls-adapter-interface.jar" file from the Lightstreamer distribution in the "BananaDart/lib" folder.
 * Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a croftsoft-math.jar version. Please make sure to include: applet, io, inlp, lang and math packages.
 * Copy the just compiled "croftsoft-math.jar" file in the "BananaDart/lib" folder.
 
