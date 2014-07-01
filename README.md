@@ -9,34 +9,30 @@ Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, dart game ru
 ## Install
 
 * Download and install Lightstreamer Vivace (make sure you use Vivace edition, otherwise you will see a limit on the event rate; Vivace comes with a free non-expiring demo license for 20 connected users).
-* Get the "BananaDart" deploy folder from "deploy.zip" of the [latest release](https://github.com/Weswit/BananaDarts-adapter-java/releases) and unzip it.
-* Copy the just unzipped BananaDart folder into the "adapters" folder of your Lightstreamer Server installation.
-* Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a croftsoft-math.jar version. Please make sure to include: applet, io, inlp, lang and math packages.
-* Copy the just compiled "croftsoft-math.jar" file in the "BananaDart/lib" folder.
-
-Launch Lightstreamer.
+* Get `deploy.zip` file of the [latest release](https://github.com/Weswit/BananaDarts-adapter-java/releases) and unzip it.
+* Copy the just unzipped `Dart` folder into the `adapters` folder of your Lightstreamer Server installation.
+* Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a `croftsoft-math.jar` version. Please make sure to include: applet, io, inlp, lang and math packages.
+* Copy the just compiled `croftsoft-math.jar` file in the `BananaDart/lib` folder.
+* Launch Lightstreamer.
 
 ## Build
 
 To build the adapter follow these steps:
 
-* Get the ls-adapter-interface.jar and ls-generic-adapters.jar from the Lightstreamer distribution.
-* Get a log4j 1.2 jar somewhere (there is one in the Lightstreamer distribution) 
+* Get the `src` folder from this project, containing the source files to be compiled.
+* Create a `compile_libs` folder.
+* Get the `ls-adapter-interface.jar`, `ls-generic-adapters.jar`, and `log4j-1.2.15.jar` from the [Lightstreamer distribution](http://www.lightstreamer.com/download) and copy them into the compile_libs folder..
 * Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a croftsoft-math.jar version. Please make sure to include: applet, io, inlp, lang and math packages.
-
-Put the downloaded jars in a lib folder inside this project.
-
+* Put the just compiled `croftsoft-math.jar` file in the `compile_libs` folder.
+* Build the java source files in the `src` folder into a `LS_darts_adapters.jar` file. Here is an example for that:
 Then create a classes folder and run
 
 ```
-javac -classpath ./lib/croftsoft-math.jar;./lib/ls-adapter-interface.jar;./lib/ls-generic-adapters.jar;./lib/log4j.jar -d ./classes ./src/com/lightstreamer/adapters/Dart/*.java ./src/com/lightstreamer/adapters/Dart/engine3D/*.java ./src/com/lightstreamer/adapters/Dart/room/*.java
-```
-
-Then go into the classes folder and run
+ > javac -classpath ./compile_libs/croftsoft-math.jar;./compile_libs/ls-adapter-interface.jar;./compile_libs/ls-generic-adapters.jar;./compile_libs/log4j.jar -d ./classes ./src/com/lightstreamer/adapters/Dart/*.java ./src/com/lightstreamer/adapters/Dart/engine3D/*.java ./src/com/lightstreamer/adapters/Dart/room/*.java
+ > jar cvf LS_darts_adapters.jar -C tmp_classes com
 
 ```
-jar cf ../deploy/LS_darts_adapters.jar ./com
-```
+* Copy the just compiled `LS_darts_adapters.jar` in the `adapters/Dart/lib` folder of your Lightstreamer Server.
 
 ## See Also
 
