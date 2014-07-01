@@ -5,6 +5,8 @@ Multiplayer, [Leap Motion](https://www.leapmotion.com/) controlled, dart game ru
 [Lightstreamer](http://www.lightstreamer.com) for its real-time communication needs.  
 
 <!-- END DESCRIPTION bananadarts-adapter-java -->
+## Details
+As example of a client using this adapter, you may refer to the [Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Weswit/BananaDarts-client-javascript) and view the corresponding [Live Demo](http://demos.lightstreamer.com/BananaDarts).
 
 ## Install
 
