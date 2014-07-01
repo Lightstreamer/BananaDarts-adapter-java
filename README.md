@@ -25,12 +25,9 @@ To build the adapter follow these steps:
 * Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a croftsoft-math.jar version. Please make sure to include: applet, io, inlp, lang and math packages.
 * Put the just compiled `croftsoft-math.jar` file in the `compile_libs` folder.
 * Build the java source files in the `src` folder into a `LS_darts_adapters.jar` file. Here is an example for that:
-Then create a classes folder and run
-
 ```
  > javac -classpath ./compile_libs/croftsoft-math.jar;./compile_libs/ls-adapter-interface.jar;./compile_libs/ls-generic-adapters.jar;./compile_libs/log4j.jar -d ./classes ./src/com/lightstreamer/adapters/Dart/*.java ./src/com/lightstreamer/adapters/Dart/engine3D/*.java ./src/com/lightstreamer/adapters/Dart/room/*.java
  > jar cvf LS_darts_adapters.jar -C tmp_classes com
-
 ```
 * Copy the just compiled `LS_darts_adapters.jar` in the `adapters/Dart/lib` folder of your Lightstreamer Server.
 
