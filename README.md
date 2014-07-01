@@ -16,6 +16,7 @@ As example of a client using this adapter, you may refer to the [Multiplayer Dar
 * Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a `croftsoft-math.jar` version. Please make sure to include: applet, io, inlp, lang and math packages.
 * Copy the just compiled `croftsoft-math.jar` file in the `BananaDart/lib` folder.
 * Launch Lightstreamer Server.
+* Launch a client like the [Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Weswit/BananaDarts-client-javascript).
 
 ## Build
 
