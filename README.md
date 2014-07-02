@@ -18,20 +18,18 @@ As example of a client using this adapter, you may refer to the [Multiplayer Dar
 * Launch a client like the [Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Weswit/BananaDarts-client-javascript).
 
 ## Build
+To build your own version of `LS_darts_adapters.jar`, instead of using the one provided in the `deploy.zip` file, follow these steps:
 
-To build the adapter follow these steps:
-
-* Get the `src` folder from this project, containing the source files to be compiled.
-* Create a `compile_libs` folder.
-* Get the `ls-adapter-interface.jar`, `ls-generic-adapters.jar`, and `log4j-1.2.15.jar` from the [Lightstreamer distribution](http://www.lightstreamer.com/download) and copy them into the compile_libs folder..
-* Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a croftsoft-math.jar version. Please make sure to include: applet, io, inlp, lang and math packages.
-* Put the just compiled `croftsoft-math.jar` file in the `compile_libs` folder.
+* Clone this project
+* Get the `ls-adapter-interface.jar`, `ls-generic-adapters.jar`, and `log4j-1.2.15.jar` from the [Lightstreamer distribution](http://www.lightstreamer.com/download) and copy them into the `lib` folder..
+* Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a `croftsoft-math.jar` version. Please make sure to include: applet, io, inlp, lang and math packages.
+* Put the just compiled `croftsoft-math.jar` file in the `lib` folder.
 * Build the java source files in the `src` folder into a `LS_darts_adapters.jar` file. Here is an example for that:
 ```
- > javac -classpath ./compile_libs/croftsoft-math.jar;./compile_libs/ls-adapter-interface.jar;./compile_libs/ls-generic-adapters.jar;./compile_libs/log4j.jar -d ./classes ./src/com/lightstreamer/adapters/Dart/*.java ./src/com/lightstreamer/adapters/Dart/engine3D/*.java ./src/com/lightstreamer/adapters/Dart/room/*.java
+ > javac -classpath ./lib/croftsoft-math.jar;./lib/ls-adapter-interface.jar;./lib/ls-generic-adapters.jar;./lib/log4j.jar -d ./classes ./src/com/lightstreamer/adapters/Dart/*.java ./src/com/lightstreamer/adapters/Dart/engine3D/*.java ./src/com/lightstreamer/adapters/Dart/room/*.java
  > jar cvf LS_darts_adapters.jar -C tmp_classes com
 ```
-* Copy the just compiled `LS_darts_adapters.jar` in the `adapters/Dart/lib` folder of your Lightstreamer Server.
+* Copy the just compiled `LS_darts_adapters.jar` in the `adapters/Dart/lib` folder of your Lightstreamer Server installation.
 
 ## See Also
 
