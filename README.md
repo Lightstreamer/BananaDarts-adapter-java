@@ -28,7 +28,7 @@ To build your own version of `LS_darts_adapters.jar`, instead of using the one p
 * Build the java source files in the `src` folder into a `LS_darts_adapters.jar` file. Here is an example for that:
 ```
  > javac -classpath ./lib/croftsoft-math.jar;./lib/ls-adapter-interface.jar;./lib/log4j-1.2.17.jar -d ./classes ./src/com/lightstreamer/adapters/Dart/*.java ./src/com/lightstreamer/adapters/Dart/engine3D/*.java ./src/com/lightstreamer/adapters/Dart/room/*.java
- > jar cvf LS_darts_adapters.jar -C tmp_classes com
+ > jar cvf LS_darts_adapters.jar -C classes com
 ```
 * Copy the just compiled `LS_darts_adapters.jar` in the `adapters/Dart/lib` folder of your Lightstreamer Server installation.
 
