@@ -26,7 +26,8 @@ To build your own version of `LS_darts_adapters.jar`, instead of using the one p
 * Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a `croftsoft-math.jar` version. Please make sure to include: applet, io, inlp, lang and math packages.
 * Put the just compiled `croftsoft-math.jar` file in the `lib` folder.
 * Build the java source files in the `src` folder into a `LS_darts_adapters.jar` file. Here is an example for that:
-```
+```sh
+ > mkdir classes
  > javac -classpath ./lib/croftsoft-math.jar;./lib/ls-adapter-interface.jar;./lib/log4j-1.2.17.jar -d ./classes ./src/com/lightstreamer/adapters/Dart/*.java ./src/com/lightstreamer/adapters/Dart/engine3D/*.java ./src/com/lightstreamer/adapters/Dart/room/*.java
  > jar cvf LS_darts_adapters.jar -C classes com
 ```
