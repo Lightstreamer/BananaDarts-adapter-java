@@ -11,7 +11,7 @@ As example of a client using this adapter, you may refer to the [Multiplayer Dar
 
 ## Install
 If you want to install a version of this demo in your local Lightstreamer Server, follow these steps
-* Download Lightstreamer Server Vivace (make sure you use Vivace edition, otherwise you will see a limit on the event rate; Lightstreamer Server comes with a free non-expiring demo license for 20 connected users) from [Lightstreamer Download page](http://www.lightstreamer.com/download.htm), and install it, as explained in the `GETTING_STARTED.TXT` file in the installation home directory.
+* Download Lightstreamer Server (Lightstreamer Server comes with a free non-expiring demo license for 20 connected users; this should be preferred to using COMMUNITY edition, otherwise you would see a limit on the event rate) from [Lightstreamer Download page](http://www.lightstreamer.com/download.htm), and install it, as explained in the `GETTING_STARTED.TXT` file in the installation home directory.
 * Get the `deploy.zip` file of the [latest release](https://github.com/Lightstreamer/BananaDarts-adapter-java/releases), unzip it and copy the just unzipped `BananaDarts` folder into the `adapters` folder of your Lightstreamer Server installation.
 * Download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and compile a `croftsoft-math.jar` version. Please make sure to include: applet, io, inlp, lang and math packages.
 * Copy the just compiled `croftsoft-math.jar` file in the `BananaDarts/lib` folder.
