@@ -18,14 +18,17 @@ package com.lightstreamer.adapters.Dart.engine3D;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import sun.util.logging.internal.LoggingProviderImpl.LogManagerAccess;
 
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class Universe {
     
-    private static Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
+    private static Logger logger = LogManager.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
     
     private Map<String,World> worlds = new HashMap<String,World>();
     

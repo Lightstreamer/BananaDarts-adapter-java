@@ -19,8 +19,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.lightstreamer.adapters.Dart.engine3D.Universe;
 import com.lightstreamer.adapters.Dart.room.ChatRoom;
@@ -53,6 +53,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
 
     @Override
     public void init(Map params, File configDir) throws MetadataProviderException {
+        /*
         String logConfig = (String) params.get("log_config");
         if (logConfig != null) {
             File logConfigFile = new File(configDir, logConfig);
@@ -63,8 +64,9 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
                 DOMConfigurator.configure(logConfigFile.getAbsolutePath());
             }
         } //else the bridge to logback is expected
+        */
         
-        logger = Logger.getLogger(Constants.LOGGER_CAT);
+        logger = LogManager.getLogger(Constants.LOGGER_CAT);
         
         // Read the Adapter Set name, which is supplied by the Server as a parameter
         this.adapterSetId = (String) params.get("adapters_conf.id");

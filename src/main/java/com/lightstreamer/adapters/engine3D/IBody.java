@@ -14,7 +14,8 @@ Copyright (c) Lightstreamer Srl
    limitations under the License.
 */
 package com.lightstreamer.adapters.Dart.engine3D;
-import com.croftsoft.core.math.axis.AxisAngle;
+
+import org.apache.commons.math3.complex.Quaternion;
 
 /***********************************************************************
 * Mutator interface for a JoglCamera.
@@ -53,7 +54,7 @@ public interface  IBody {
         UP
     }
 
-    AxisAngle  getAxisAngle ( );
+    Quaternion  getAxisAngle ( );
     
     double  getX ( );
     
@@ -61,7 +62,7 @@ public interface  IBody {
     
     double  getZ ( );
      
-    void  setAxisAngle ( AxisAngle  axisAngle );
+    void  setAxisAngle ( Quaternion  axisAngle );
       
     void  setX ( double  x );
       
@@ -71,7 +72,7 @@ public interface  IBody {
     
     // relative mutator methods
       
-    void  rotate (AxisAngle axisAngle);
+    void  rotate (Quaternion axisAngle);
      
     void  rotate (Axis axis, double degrees);
     

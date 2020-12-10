@@ -21,16 +21,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import org.apache.commons.math3.complex.Quaternion;
 
 import com.croftsoft.core.lang.EnumUnknownException;
-import com.croftsoft.core.math.axis.AxisAngle;
+
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class Dart implements IBody {
     
-    private Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
+    private Logger logger = LogManager.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
 
     private String id;
     
@@ -463,19 +466,19 @@ public class Dart implements IBody {
     //rotation is not handled -->
 
     @Override
-    public AxisAngle getAxisAngle() {
+    public Quaternion getAxisAngle() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void setAxisAngle(AxisAngle axisAngle) {
+    public void setAxisAngle(Quaternion axisAngle) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void rotate(AxisAngle axisAngle) {
+    public void rotate(Quaternion axisAngle) {
         // TODO Auto-generated method stub
         
     }

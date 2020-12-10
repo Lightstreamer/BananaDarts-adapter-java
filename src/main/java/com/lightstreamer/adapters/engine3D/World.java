@@ -18,14 +18,15 @@ package com.lightstreamer.adapters.Dart.engine3D;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.lightstreamer.adapters.Dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class World extends Thread {
     
-    private Logger logger = Logger.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
+    private Logger logger = LogManager.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
     
     private String id=null;
     

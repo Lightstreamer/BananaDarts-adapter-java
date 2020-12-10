@@ -21,7 +21,8 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.lightstreamer.adapters.Dart.Constants;
 
@@ -36,7 +37,7 @@ public class ChatRoom {
     static final boolean REALTIME = true;
     static final boolean SNAPSHOT = false;
     
-    private Logger logger = Logger.getLogger(Constants.CHAT_CAT);
+    private Logger logger = LogManager.getLogger(Constants.CHAT_CAT);
     
     
     private HashMap<String,User> users = new HashMap<String,User>();

@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.lightstreamer.adapters.Dart.engine3D.Universe;
 import com.lightstreamer.adapters.Dart.room.ChatRoom;
@@ -46,6 +46,7 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
     
     @Override
     public void init(Map params, File configDir) throws DataProviderException {
+        /*
         String logConfig = (String) params.get("log_config");
         if (logConfig != null) {
             File logConfigFile = new File(configDir, logConfig);
@@ -56,8 +57,9 @@ public class DartDataAdapter implements SmartDataProvider, ChatRoomListener {
                 DOMConfigurator.configure(logConfigFile.getAbsolutePath());
             }
         } //else the bridge to logback is expected
+        */
         
-        logger = Logger.getLogger(Constants.LOGGER_CAT);
+        logger = LogManager.getLogger(Constants.LOGGER_CAT);
         
         logger.info("Adapter Logger start.");
         
