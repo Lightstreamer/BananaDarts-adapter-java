@@ -18,7 +18,6 @@ package com.lightstreamer.adapters.Dart;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.LogManager;
@@ -137,7 +136,7 @@ public class DartMetaDataAdapter extends LiteralBasedProvider {
     }
     
     @Override
-    public CompletionStage<String> notifyUserMessage(String user, String session, String message)
+    public CompletableFuture<String> notifyUserMessage(String user, String session, String message)
             throws CreditsException, NotificationException {
 
         // we won't introduce blocking operations, hence we can proceed inline
