@@ -39,7 +39,6 @@
           <mainClass>com.lightstreamer.adapters.Dart.DartMetaDataAdapter</mainClass>
         </configuration>
       </plugin>
-         
     </plugins>
   </build>
   
@@ -69,16 +68,15 @@
       <version>2.17.1</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.commons</groupId>
-    	<artifactId>commons-math3</artifactId>
-    	<version>3.6.1</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math3</artifactId>
+      <version>3.6.1</version>
     </dependency>
-	<!-- https://mvnrepository.com/artifact/javax.jnlp/jnlp -->
-	<dependency>
-		<groupId>javax.jnlp</groupId>
-		<artifactId>jnlp</artifactId>
-		<version>7.0</version>
-	</dependency>
+    <dependency>
+      <groupId>javax.jnlp</groupId>
+      <artifactId>jnlp</artifactId>
+      <version>7.0</version>
+    </dependency>
   </dependencies>
   
 </project>
