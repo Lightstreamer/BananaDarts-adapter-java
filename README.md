@@ -5,7 +5,7 @@ The *Multiplayer Darts* implements a multiplayer, [Leap Motion](https://www.leap
 
 This project shows the Data Adapter and Metadata Adapters for the *Multiplayer Darts* and how they can be plugged into Lightstreamer Server.
 
-As example of a client using this adapter, you may refer to the [Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Lightstreamer/BananaDarts-client-javascript) and view the corresponding [Live Demo](http://demos.lightstreamer.com/BananaDarts).
+As an example of a client using this adapter, you may refer to the [Multiplayer Darts - HTML (LeapJS, Three.js) Client](https://github.com/Lightstreamer/BananaDarts-client-javascript) and view the corresponding [Live Demo](http://demos.lightstreamer.com/BananaDarts).
 
 <!-- END DESCRIPTION bananadarts-adapter-java -->
 
@@ -20,10 +20,9 @@ If you want to install a version of this demo in your local Lightstreamer Server
 
 ## Build
 
-To build your own version of `example-MultiplayerDarts-adapter-java-x.y.z.jar`, instead of using the one provided in the `deploy.zip` file from the [Install](#install) section above, you have two options:
+To build your own version of `example-multiplayerdarts-adapter-java-x.y.z.jar`, instead of using the one provided in the `deploy.zip` file from the [Install](#install) section above, you have two options:
 either use [Maven](https://maven.apache.org/) (or other build tools) to take care of dependencies and building (recommended) or gather the necessary jars yourself and build it manually.
-As a precondition for compiling you need to download [croftsoft](http://sourceforge.net/projects/croftsoft/files/) library and copy the sources of applet, io, jnlp, lang and math packages into `src\main\java\` folder of this project.
-For the sake of simplicity only the Maven case is detailed here.
+For the sake of simplicity, only the Maven case is detailed here.
 
 ### Maven
 
@@ -47,7 +46,7 @@ Assuming Maven is installed and available in your path you can build the demo by
 ## Lightstreamer Compatibility Notes
 
 - Compatible with Lightstreamer SDK for Java In-Process Adapters since version 8.0.
-- For a version of this example compatible with Lightstreamer SDK for Java Adapters versions 7.4.x, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/last_for_interface_7.4.x).
+- For a version of this example compatible with Lightstreamer SDK for Java Adapters version 7.4.x, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/last_for_interface_7.4.x).
 - For a version of this example compatible with Lightstreamer SDK for Java Adapters versions 7.0 to 7.3, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/last_for_interface_7.3).
 - For a version of this example compatible with Lightstreamer SDK for Java Adapters version 6.0, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/pre_mvn).
 - For a version of this example compatible with Lightstreamer SDK for Java Adapters version 5.1, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/for_Lightstreamer_5.1).
