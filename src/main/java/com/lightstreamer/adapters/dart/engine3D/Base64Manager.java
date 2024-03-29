@@ -13,7 +13,7 @@ Copyright (c) Lightstreamer Srl
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package com.lightstreamer.adapters.Dart.engine3D;
+package com.lightstreamer.adapters.dart.engine3D;
 
 import java.io.IOException;
 

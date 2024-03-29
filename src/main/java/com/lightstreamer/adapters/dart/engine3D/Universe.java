@@ -13,7 +13,7 @@ Copyright (c) Lightstreamer Srl
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package com.lightstreamer.adapters.Dart.engine3D;
+package com.lightstreamer.adapters.dart.engine3D;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,14 +21,12 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import sun.util.logging.internal.LoggingProviderImpl.LogManagerAccess;
-
-import com.lightstreamer.adapters.Dart.room.User;
+import com.lightstreamer.adapters.dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class Universe {
     
-    private static Logger logger = LogManager.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
+    private static Logger logger = LogManager.getLogger(com.lightstreamer.adapters.dart.Constants.WORLD_CAT);
     
     private Map<String,World> worlds = new HashMap<String,World>();
     

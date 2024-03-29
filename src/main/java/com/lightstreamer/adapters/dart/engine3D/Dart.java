@@ -13,7 +13,7 @@ Copyright (c) Lightstreamer Srl
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package com.lightstreamer.adapters.Dart.engine3D;
+package com.lightstreamer.adapters.dart.engine3D;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -27,13 +27,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.commons.math3.complex.Quaternion;
 
 import com.croftsoft.core.lang.EnumUnknownException;
-
-import com.lightstreamer.adapters.Dart.room.User;
+import com.lightstreamer.adapters.dart.room.User;
 import com.lightstreamer.interfaces.metadata.CreditsException;
 
 public class Dart implements IBody {
     
-    private Logger logger = LogManager.getLogger(com.lightstreamer.adapters.Dart.Constants.WORLD_CAT);
+    private Logger logger = LogManager.getLogger(com.lightstreamer.adapters.dart.Constants.WORLD_CAT);
 
     private String id;
     

@@ -13,7 +13,7 @@ Copyright (c) Lightstreamer Srl
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package com.lightstreamer.adapters.Dart.room;
+package com.lightstreamer.adapters.dart.room;
 
 import java.util.Map;
 

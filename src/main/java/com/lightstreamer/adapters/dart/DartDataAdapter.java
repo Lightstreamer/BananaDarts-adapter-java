@@ -13,7 +13,7 @@ Copyright (c) Lightstreamer Srl
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package com.lightstreamer.adapters.Dart;
+package com.lightstreamer.adapters.dart;
 
 import java.io.File;
 import java.util.HashMap;
@@ -23,10 +23,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.lightstreamer.adapters.Dart.engine3D.Universe;
-import com.lightstreamer.adapters.Dart.room.ChatRoom;
-import com.lightstreamer.adapters.Dart.room.ChatRoomListener;
-import com.lightstreamer.adapters.Dart.room.User;
+import com.lightstreamer.adapters.dart.engine3D.Universe;
+import com.lightstreamer.adapters.dart.room.ChatRoom;
+import com.lightstreamer.adapters.dart.room.ChatRoomListener;
+import com.lightstreamer.adapters.dart.room.User;
 import com.lightstreamer.interfaces.data.DataProviderException;
 import com.lightstreamer.interfaces.data.FailureException;
 import com.lightstreamer.interfaces.data.ItemEventListener;
