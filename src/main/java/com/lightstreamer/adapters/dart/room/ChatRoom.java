@@ -26,6 +26,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.lightstreamer.adapters.dart.Constants;
 
+import com.lightstreamer.adapter.data.ItemListener;
+
 
 public class ChatRoom {
 
@@ -128,7 +130,7 @@ public class ChatRoom {
         }
     }
     
-    public void startUserMessageListen(String id, Object handle) {
+    public void startUserMessageListen(String id, ItemListener handle) {
         synchronized(users) {
             logger.trace("User private messages startup " + id);
             
@@ -137,7 +139,7 @@ public class ChatRoom {
         }
     }
     
-    public void startUserStatusListen(String id, Object userStatusHandle) {
+    public void startUserStatusListen(String id, ItemListener userStatusHandle) {
         synchronized(users) {
             logger.trace("User status messages startup " + id);
             
@@ -296,7 +298,7 @@ public class ChatRoom {
     // USER EVENTS    
         
     //synchronized(users) {
-    void sendUserStatusEvent(final User user, final String nick, final String statusId, final String status, final Map<String,String> extra, final Object userStatusHandle, final boolean realTimeEvent) {
+    void sendUserStatusEvent(final User user, final String nick, final String statusId, final String status, final Map<String,String> extra, final ItemListener userStatusHandle, final boolean realTimeEvent) {
         executor.execute(new Runnable() {
             public void run() {
                 listener.onUserStatusChange(user, nick, statusId, status, extra, userStatusHandle, realTimeEvent);
@@ -348,7 +350,7 @@ public class ChatRoom {
     // ROOM LIFECYCLE
         // IN
     
-    public void startRoomListen(final String roomId, final Object roomStatusHandle) {
+    public void startRoomListen(final String roomId, final ItemListener roomStatusHandle) {
         
         synchronized(rooms) {
             Room room = this.getRoomForced(roomId);
@@ -372,7 +374,7 @@ public class ChatRoom {
         }
     }
     
-    public void startRoomChatListen(String roomId, Object roomChatHandle) {
+    public void startRoomChatListen(String roomId, ItemListener roomChatHandle) {
         synchronized(rooms) {
             logger.trace("Room chat startup " + roomId);
             
@@ -418,7 +420,7 @@ public class ChatRoom {
     // ROOM EVENTS
 
     //synchronized(rooms) {
-    void sendRoomStatusEvent(final User user, final String roomId, final Object roomStatusHandle, boolean entering, final boolean realTimeEvent) {
+    void sendRoomStatusEvent(final User user, final String roomId, final ItemListener roomStatusHandle, boolean entering, final boolean realTimeEvent) {
         if (entering) {
             executor.execute(new Runnable() {
                 public void run() {
@@ -435,7 +437,7 @@ public class ChatRoom {
     }
     
     
-    void sendRoomMessageEvent(final User user, final String room, final Object messageHandle, final String message) {
+    void sendRoomMessageEvent(final User user, final String room, final ItemListener messageHandle, final String message) {
         final String nick = user.getNick();
         executor.execute(new Runnable() {
             public void run() {

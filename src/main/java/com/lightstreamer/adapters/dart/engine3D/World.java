@@ -22,7 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.lightstreamer.adapters.dart.room.User;
-import com.lightstreamer.interfaces.metadata.CreditsException;
+import com.lightstreamer.adapter.metadata.CreditsException;
 
 public class World extends Thread {
     

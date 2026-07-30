@@ -28,7 +28,7 @@ import org.apache.commons.math3.complex.Quaternion;
 
 import com.croftsoft.core.lang.EnumUnknownException;
 import com.lightstreamer.adapters.dart.room.User;
-import com.lightstreamer.interfaces.metadata.CreditsException;
+import com.lightstreamer.adapter.metadata.CreditsException;
 
 public class Dart implements IBody {
     

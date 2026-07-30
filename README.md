@@ -45,7 +45,8 @@ Assuming Maven is installed and available in your path you can build the demo by
 
 ## Lightstreamer Compatibility Notes
 
-- Compatible with Lightstreamer SDK for Java In-Process Adapters since version 8.0.
+- Compatible with Lightstreamer SDK for Java In-Process Adapters since version 9.0.
+- For a version of this example compatible with Lightstreamer SDK for Java In-Process Adapters versions 8.x, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/XXXXXXXXXXXXXXXXXXXXX).
 - For a version of this example compatible with Lightstreamer SDK for Java Adapters version 7.4.x, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/last_for_interface_7.4.x).
 - For a version of this example compatible with Lightstreamer SDK for Java Adapters versions 7.0 to 7.3, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/last_for_interface_7.3).
 - For a version of this example compatible with Lightstreamer SDK for Java Adapters version 6.0, please refer to [this tag](https://github.com/Lightstreamer/BananaDarts-adapter-java/tree/pre_mvn).
